@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon -r dotenv/config ./src/index.ts",
+    "start": "nodemon -r dotenv/config ./src/index.ts | bunyan --color",
     "lint": "eslint src/**/*.ts",
     "compile": "tsc -b tsconfig.json"
   },
@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
+    "@types/bunyan": "^1.8.9",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "eslint": "^8.50.0",
@@ -24,6 +25,8 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
+    "@grammyjs/menu": "^1.2.1",
+    "bunyan": "^1.8.15",
     "dotenv": "^16.3.1",
     "grammy": "1.19.0"
   }
