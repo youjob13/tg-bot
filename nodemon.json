@@ -1,0 +1,16 @@
+{
+    "env": { },
+    "execMap": {
+        "ts": "node --loader ts-node/esm"
+    },
+    "ext": "ts",
+    "ignore": [
+        ".git",
+        "node_modules/**/node_modules",
+        "src/**/*.spec.ts"
+    ],
+    "restartable": "rs",
+    "watch": [
+        "src"
+    ]
+}
