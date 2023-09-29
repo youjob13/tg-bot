@@ -1,0 +1,18 @@
+{
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/.vscode": true
+    },
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "prettier.prettierPath": "node_modules/prettier/index.cjs",
+    "prettier.configPath": ".prettierrc.json",
+    "editor.formatOnSave": true,
+    "html.format.enable": false,
+    "editor.formatOnPaste": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+    },
+}

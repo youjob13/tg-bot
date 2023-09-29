@@ -6,5 +6,9 @@
   "tabWidth": 4,
   "printWidth": 120,
   "useTabs": false,
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "importOrder": ["^@grammy/(.*)$", "^@grammyjs/(.*)$", "^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }
