@@ -4,51 +4,39 @@ import { apiThrottler } from '@grammyjs/transformer-throttler';
 
 import * as Config from '../config.js';
 import { botLogger } from '../logger.js';
+import commands, { COMMAND_LIST } from './commands/index.js';
+import menus from './menus/menu.js';
 
-const bot = new Bot(Config.TG_BOT_TOKEN);
-// bot.chatType('private');
+const createBot = async () => {
+    const bot = new Bot(Config.TG_BOT_TOKEN);
 
-bot.catch(err => {
-    const ctx = err.ctx;
-    botLogger.error(`Error while handling update ${ctx.update.update_id}:`);
+    await bot.api.setMyCommands(COMMAND_LIST);
 
-    const error = err.error;
-    if (error instanceof GrammyError) {
-        botLogger.error('Error in request (Grammy error):', error.description);
-    } else if (error instanceof HttpError) {
-        botLogger.error('Could not contact Telegram (HTTP error):', error);
-    } else {
-        botLogger.error('Unknown error:', error);
-    }
-});
+    bot.api.config.use(apiThrottler());
 
-bot.api.config.use(apiThrottler());
+    bot.use(...menus);
+    bot.use(...commands);
 
-// bot.use(botHandlers);
+    bot.on('message', ctx => {
+        console.log(ctx.msg);
+    });
 
+    bot.catch(err => {
+        const ctx = err.ctx;
+        botLogger.error(`Error while handling update ${ctx.update.update_id}:`);
+
+        const error = err.error;
+        if (error instanceof GrammyError) {
+            botLogger.error('Error in request (Grammy error):', error.description);
+        } else if (error instanceof HttpError) {
+            botLogger.error('Could not contact Telegram (HTTP error):', error);
+        } else {
+            botLogger.error('Unknown error:', error);
+        }
+    });
+
+    return bot;
+};
+
+const bot = await createBot();
 export default bot;
-
-// bot.use(dateMenu);
-// bot.use(monthMenu);
-// bot.use(serviceMenu);
-// bot.use(registrationMenu);
-// // bot.use(logRequestInfo);
-
-// await bot.api.setMyCommands([
-//     { command: 'start', description: 'Start the bot' },
-//     { command: 'help', description: 'Show help text' },
-//     { command: 'stop', description: 'Stop the bot' },
-// ]);
-
-// const GREETING_MESSAGE = `Привет🤍
-// Здесь ты можешь записаться на удобный день и время на маникюр✨`;
-
-// bot.command('start', async ctx => {
-//     await ctx.reply(GREETING_MESSAGE, { reply_markup: registrationMenu });
-// });
-
-// bot.start({
-//     onStart: () => {
-//         botLogger.info('Bot started!');
-//     },
-// });

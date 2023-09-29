@@ -28,8 +28,11 @@ const serviceMenu = createSimpleTextMenu(
     serviceMenuHandler,
 );
 
-const registrationMenu = createSimpleTextMenu('registration_menu', ['Записаться'], async (ctx: Context) => {
+export const registrationMenu = createSimpleTextMenu('registration_menu', ['Записаться'], async (ctx: Context) => {
     await ctx.reply('Выберите услугу:', { reply_markup: serviceMenu });
 });
 
-export { registrationMenu, serviceMenu, monthMenu, dateMenu };
+/**
+ * @description Order is important!
+ */
+export default [dateMenu, monthMenu, serviceMenu, registrationMenu];

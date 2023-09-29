@@ -8,6 +8,6 @@ import server from './server/server.js';
 server.listen(Config.PORT, () => {
     apiLogger.info('Server listening on port', Config.PORT);
 
-    run(bot);
-    botLogger.info('Bot started');
+    const handler = run(bot);
+    botLogger.info('Bot started?', handler.isRunning());
 });

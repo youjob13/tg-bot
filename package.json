@@ -5,17 +5,18 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "precommit": "npm run build && npm run lint && npm run pretty",
     "start:prod": "node -r dotenv/config ./dist/index.js",
     "start": "nodemon -r dotenv/config ./src/index.ts | bunyan --color",
     "lint": "eslint src/**/*.ts",
     "build": "tsc -b tsconfig.json",
-    "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\""
+    "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\"",
+    "prepare": "husky install"
   },
   "author": "Danil_Rodionov",
   "license": "ISC",
   "devDependencies": {
     "@grammyjs/transformer-throttler": "1.2.1",
-    "@ianvs/prettier-plugin-sort-imports": "^4.1.0",
     "@trivago/prettier-plugin-sort-imports": "4.2.0",
     "@tsconfig/node18": "18.2.2",
     "@types/bunyan": "1.8.9",
@@ -26,6 +27,7 @@
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-prettier": "5.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
+    "husky": "8.0.0",
     "nodemon": "3.0.1",
     "prettier": "3.0.3",
     "ts-node": "10.9.1",

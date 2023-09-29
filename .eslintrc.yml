@@ -6,7 +6,6 @@ extends:
 plugins:
   - "@typescript-eslint"
   - unused-imports
-  - '@trivago/prettier-plugin-sort-imports'
 parserOptions:
   sourceType: module
   project: tsconfig.json
