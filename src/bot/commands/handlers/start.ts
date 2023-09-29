@@ -4,7 +4,7 @@ import { makeAppointmentKeyboard } from '../../keyboards/inline-keyboards.js';
 
 const composer = new Composer();
 
-let ownerChatId = null;
+export let ownerChatId: number | null = null;
 
 composer.command('start', async ctx => {
     if (ctx.message?.from.username === 'youjob13' /*Config.OWNER_USER_NAME*/) {

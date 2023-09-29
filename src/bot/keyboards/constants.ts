@@ -1,8 +1,10 @@
-export const INLINE_QUERY = {
-    makeAppointment: 'make_appointment_query',
-    selectService: 'select_service_query',
-    selectDate: 'select_date_query',
-};
+export enum InlineQuery {
+    MakeAppointment = 'make_appointment_query',
+    SelectService = 'select_service_query',
+    SelectDate = 'select_date_query',
+    ApproveNewRequest = 'approve_new_request_query',
+    RejectNewRequest = 'reject_new_request_query',
+}
 
 export enum ServiceOption {
     Min = 'min',

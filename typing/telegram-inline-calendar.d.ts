@@ -16,11 +16,28 @@ declare module 'telegram-inline-calendar' {
     }
 
     export class Calendar {
+        options: ICalendarOptions;
         public chats: Map<any, any>;
-        constructor(bot: Bot<Context, Api<RawApi>>, options: ICalendarOptions);
 
-        public startNavCalendar(ctx: any): Promise<void>;
-        public clickButtonCalendar(ctx: any): string | number;
-        public createNavigationKeyboard(date: Date): any;
+        constructor(bot: Bot<Context, Api<RawApi>>, options: ICalendarOptions) {
+            this.options = options;
+        }
+
+        public startNavCalendar(ctx: Context, freeDates?: number[]): Promise<void>;
+        public clickButtonCalendar(ctx: Context): string | number;
+        public createNavigationKeyboard(date: Date, freeDates?: number[]): any;
+        protected sendMessageCalendar(reply_markup: any, ctx: Context): Promise<void>;
+        protected replyMarkupObject(
+            keyboard: InlineKeyboardMarkup & ReplyKeyboardMarkup & ReplyKeyboardRemove & ForceReply,
+        ): any;
+        protected howMuchDays(year: number, month: number): number;
+        protected colRowNavigation(date: Date, cd: number): number;
+        protected dayjs(date: Date): any;
+        protected weekDaysButtons(date: number): any;
+        protected startWeekDay(date: number): number;
+        protected twoDigits(n: number): string;
+        protected editMessageReplyMarkupCalendar(date: Date, ctx: Context, freeDates?: number[]): void;
+        protected deleteMessage(ctx: Context): void;
+        protected editMessageReplyMarkupTime(date: Dayjs, ctx: Context, from_calendar: boolean): void;
     }
 }

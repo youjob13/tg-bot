@@ -4,7 +4,6 @@ import { apiThrottler } from '@grammyjs/transformer-throttler';
 
 import * as Config from '../config.js';
 import { botLogger } from '../logger.js';
-// @ts-ignore
 import TgInlineCalendar from './calendar.js';
 import commands, { COMMAND_LIST } from './commands/index.js';
 

@@ -1,5 +1,8 @@
 import { InlineKeyboard } from 'grammy';
 
+import { InlineQuery } from './constants';
+import { KeyboardData } from './models';
+
 export const createInlineKeyboard = (labelDataPairs: Array<Array<string>>, withNewRows = true) => {
     return labelDataPairs.reduce(
         (keyboard, [label, data]) =>
@@ -8,12 +11,12 @@ export const createInlineKeyboard = (labelDataPairs: Array<Array<string>>, withN
     );
 };
 
-export const makeInlineQueriesWithOptions = <TOption extends string, TQuery = string>(
+export const makeInlineQueriesWithOptions = <TOption extends string>(
     serviceByOption: Record<TOption, string>,
-    inlineQuery: TQuery,
+    inlineQuery: InlineQuery,
 ) => {
-    return Object.entries<string>(serviceByOption).reduce<Array<Array<string>>>((acc, [option, service]) => {
-        acc.push([service, `${inlineQuery}:${option}`]);
+    return Object.entries<string>(serviceByOption).reduce<KeyboardData>((acc, [option, service]) => {
+        acc.push([service, `${inlineQuery}:${option}` as InlineQuery]);
         return acc;
     }, []);
 };

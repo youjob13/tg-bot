@@ -5,7 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "sourceMap": true,
-    "strict": true,
+    "strict": false, // todo: solve problem with ts-node and turn on strict mode
     "esModuleInterop": true,
     "outDir": "dist",
     "typeRoots": [ "./src/typings", "./node_modules/@types"]
