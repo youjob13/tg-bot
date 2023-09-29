@@ -8,6 +8,8 @@
     "strict": true,
     "esModuleInterop": true,
     "outDir": "dist",
+    "typeRoots": [ "./src/typings", "./node_modules/@types"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "typing"],
+  "exclude": ["node_modules", "dist"]
 }

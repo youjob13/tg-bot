@@ -4,22 +4,18 @@ import { apiThrottler } from '@grammyjs/transformer-throttler';
 
 import * as Config from '../config.js';
 import { botLogger } from '../logger.js';
+// @ts-ignore
+import TgInlineCalendar from './calendar.js';
 import commands, { COMMAND_LIST } from './commands/index.js';
-import menus from './menus/menu.js';
 
 const createBot = async () => {
-    const bot = new Bot(Config.TG_BOT_TOKEN);
+    const bot = new Bot(Config.TG_BOT.TOKEN);
 
     await bot.api.setMyCommands(COMMAND_LIST);
 
     bot.api.config.use(apiThrottler());
 
-    bot.use(...menus);
     bot.use(...commands);
-
-    bot.on('message', ctx => {
-        console.log(ctx.msg);
-    });
 
     bot.catch(err => {
         const ctx = err.ctx;
@@ -35,8 +31,18 @@ const createBot = async () => {
         }
     });
 
-    return bot;
+    const calendar = new TgInlineCalendar(bot, {
+        date_format: 'DD-MM-YYYY HH:mm',
+        language: Config.TG_BOT.LANGUAGE,
+        bot_api: 'grammy',
+        time_selector_mod: true,
+        custom_start_msg: 'Выберите дату и время 📅',
+    });
+
+    return { bot, calendar };
 };
 
-const bot = await createBot();
+const { bot, calendar } = await createBot();
+
+export { calendar };
 export default bot;

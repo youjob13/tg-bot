@@ -1,5 +1,3 @@
-import start from './start.js';
-
-export default [start];
+export { default } from './handlers/index.js';
 
 export * from './constants.js';
