@@ -10,3 +10,4 @@ const logger = Logger.createLogger({
 
 export const botLogger = logger.child({ module: 'tg-bot' });
 export const apiLogger = logger.child({ module: 'api-server' });
+export const mongoLogger = logger.child({ module: 'mongodb' });

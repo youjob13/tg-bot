@@ -10,6 +10,6 @@
     "outDir": "dist",
     "typeRoots": [ "./src/typings", "./node_modules/@types"]
   },
-  "include": ["src/**/*", "typing"],
+  "include": ["src/**/*", "dto/**/*", "typing"],
   "exclude": ["node_modules", "dist"]
 }

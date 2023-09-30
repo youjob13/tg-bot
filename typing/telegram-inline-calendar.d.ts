@@ -23,9 +23,9 @@ declare module 'telegram-inline-calendar' {
             this.options = options;
         }
 
-        public startNavCalendar(ctx: Context, freeDates?: number[]): Promise<void>;
-        public clickButtonCalendar(ctx: Context): string | number;
-        public createNavigationKeyboard(date: Date, freeDates?: number[]): any;
+        public startNavCalendar(ctx: Context, availableDates?: number[], additionalPayload?: string): Promise<void>;
+        public clickButtonCalendar(ctx: Context): { res: string | number; additionalPayload?: string };
+        public createNavigationKeyboard(date: Date): any;
         protected sendMessageCalendar(reply_markup: any, ctx: Context): Promise<void>;
         protected replyMarkupObject(
             keyboard: InlineKeyboardMarkup & ReplyKeyboardMarkup & ReplyKeyboardRemove & ForceReply,
@@ -36,7 +36,7 @@ declare module 'telegram-inline-calendar' {
         protected weekDaysButtons(date: number): any;
         protected startWeekDay(date: number): number;
         protected twoDigits(n: number): string;
-        protected editMessageReplyMarkupCalendar(date: Date, ctx: Context, freeDates?: number[]): void;
+        protected editMessageReplyMarkupCalendar(date: Date, ctx: Context): void;
         protected deleteMessage(ctx: Context): void;
         protected editMessageReplyMarkupTime(date: Dayjs, ctx: Context, from_calendar: boolean): void;
     }

@@ -12,3 +12,13 @@ export const LOGGER_OPTIONS = {
     APP_NAME: process.env.APP_NAME,
     LEVEL: (process.env.LOG_LEVEL || 'info') as 'error' | 'info' | undefined,
 };
+
+export const MONGO_DB = {
+    USER: process.env.MONGO_USER ?? '',
+    PASS: process.env.MONGO_PASS ?? '',
+    NAME: process.env.MONGO_DB_NAME ?? 'data',
+    COLLECTION: {
+        REQUESTERS: process.env.REQUESTERS_COLLECTION ?? 'requesters',
+        SCHEDULE: process.env.SCHEDULE_COLLECTION ?? 'schedule',
+    },
+};

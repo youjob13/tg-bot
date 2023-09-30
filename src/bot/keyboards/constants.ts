@@ -1,16 +1,11 @@
+import { ServiceOption } from '../../../dto/index.js';
+
 export enum InlineQuery {
     MakeAppointment = 'make_appointment_query',
     SelectService = 'select_service_query',
     SelectDate = 'select_date_query',
     ApproveNewRequest = 'approve_new_request_query',
     RejectNewRequest = 'reject_new_request_query',
-}
-
-export enum ServiceOption {
-    Min = 'min',
-    Medium = 'medium',
-    Normal = 'normal',
-    Max = 'max',
 }
 
 export const ServiceByOption = {
