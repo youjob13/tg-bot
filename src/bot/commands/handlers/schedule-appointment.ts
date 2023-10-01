@@ -1,27 +1,39 @@
+import dayjs from 'dayjs';
 import { Composer, Context } from 'grammy';
+import { Chat } from 'grammy/types';
+import { WithId } from 'mongodb';
 
 import * as DTO from '../../../../dto/index.js';
 import { requesterCollection, scheduleCollection } from '../../../db/handlers/index.js';
 import bot, { calendar } from '../../bot.js';
-import { getUsernameLink } from '../../helpers.js';
+import { getUserFullName, getUsernameLink } from '../../helpers.js';
 import { InlineQuery, ServiceByOption, selectServiceKeyboard } from '../../keyboards/index.js';
-import { extractServiceTypeFromQuery, generateRequestFromUser } from './helpers.js';
+import { ADMIN_ID } from './constants.js';
+import { extractServiceTypeFromQuery, generateRequestFromUser, generateUniqueRequestId } from './helpers.js';
 import { isQueryFor } from './isQueryFor.js';
 
-// todo: ADMIN_ID shouldn't be hardcoded
-const ADMIN_ID = 934785648;
-
 const composer = new Composer();
-// todo: user could has multiple requests, so id should be unique (chatId+requestId)
 // if user don't answer, request will in progress until server down
 // maybe it makes sense to store in db
-const userRequestState = new Map<number, DTO.RequestState>();
+const userCurrentRequestState = new Map<number, DTO.RequestState>();
 // todo: find better approach then message event to get user info
 composer.on('message', async ctx => {
     const chatId = ctx.message.chat.id;
 
-    if (userRequestState.get(chatId) === DTO.RequestState.InProgress) {
-        // should get latest added service info | try to rework it with query to db
+    // todo: should be in another place
+    if (ctx.msg.text === 'getavailabledates' && chatId === ADMIN_ID) {
+        const availableDates = await scheduleCollection.getAvailableDates();
+
+        await ctx.reply(
+            `<b>Свободные даты:</b>
+
+${availableDates.map(timestamp => dayjs(timestamp).format('YYYY-MM-DD HH:mm')).join('\n')}`,
+            { parse_mode: 'HTML' },
+        );
+        return;
+    }
+
+    if (userCurrentRequestState.get(chatId) === DTO.RequestState.InProgress) {
         const requesterInfo = await requesterCollection.getRequesterInfo(chatId);
         const latestServiceInfo = requesterInfo.data[requesterInfo.data.length - 1];
 
@@ -30,8 +42,6 @@ composer.on('message', async ctx => {
         const { content, options } = generateRequestFromUser({ ctx, latestServiceInfo });
 
         await bot.api.sendMessage(ADMIN_ID, content, options);
-
-        userRequestState.set(chatId, DTO.RequestState.PendingApproval);
     }
 });
 
@@ -85,7 +95,7 @@ const processSelectService = async <TContext extends Context>(ctx: TContext) => 
 const processSelectDate = async <TContext extends Context>(ctx: TContext) => {
     const { res, additionalPayload: serviceType } = calendar.clickButtonCalendar(ctx);
 
-    if (res !== -1) {
+    if (res !== -1 && typeof res != 'number') {
         const message = ctx.callbackQuery?.message;
 
         if (message == null) {
@@ -93,46 +103,63 @@ const processSelectDate = async <TContext extends Context>(ctx: TContext) => {
             return;
         }
 
-        const chatId = message.chat.id;
+        const chat = message.chat as Chat.PrivateChat;
+        const chatId = chat.id;
 
         await requesterCollection.upsertRequesterInfo(chatId, {
+            requestId: generateUniqueRequestId(+new Date(res), serviceType as DTO.ServiceOption),
             serviceType: serviceType as DTO.ServiceOption,
-            date: String(res),
+            date: +new Date(res),
             isApproved: false,
+            username: chat.username,
+            userFullName: getUserFullName(chat),
         });
 
         await ctx.reply('Вы выбрали дату: ' + res);
         await ctx.reply('Введите ник в instagram / номер телефона и имя для подтверждения записи: ');
 
-        userRequestState.set(ctx.msg.chat.id, DTO.RequestState.InProgress);
+        userCurrentRequestState.set(chatId, DTO.RequestState.InProgress);
     }
 };
 
 const processApproveNewRequest = async <TContext extends Context>(ctx: TContext) => {
-    const [, chatId, userFullName, username] = ctx.callbackQuery.data.split(':');
+    const [, chatId, requestId] = ctx.callbackQuery.data.split('|');
 
-    const usernameLink = getUsernameLink(username, userFullName);
+    // todo: rework the way how store data in db
+    const requests = (await requesterCollection.approveUserRequest(
+        Number(chatId),
+        requestId,
+    )) as WithId<DTO.IRequesterInfo>;
 
-    // todo: unique request id
-    await requesterCollection.approveUserRequest(Number(chatId), '30-09-2023 07:30');
+    const requestInfo = requests.data.find(request => request.requestId === requestId);
+    await scheduleCollection.bookDate(requestInfo.date);
+
+    const usernameLink = getUsernameLink(requestInfo.username, requestInfo.userFullName);
 
     await ctx.deleteMessage();
     await ctx.reply(`Запись для ${usernameLink} подтверждена`, { parse_mode: 'HTML' });
     await bot.api.sendMessage(chatId, `Ваша запись подтверждена`);
 
-    userRequestState.set(ctx.msg.chat.id, DTO.RequestState.Approved);
+    userCurrentRequestState.delete(Number(chatId));
 };
 
 const processRejectNewRequest = async <TContext extends Context>(ctx: TContext) => {
-    const [, chatId, userFullName, username] = ctx.callbackQuery.data.split(':');
+    const [, chatId, requestId] = ctx.callbackQuery.data.split('|');
 
-    const usernameLink = getUsernameLink(username, userFullName);
+    // todo: rework the way how store data in db
+    const requests = (await requesterCollection.approveUserRequest(
+        Number(chatId),
+        requestId,
+    )) as WithId<DTO.IRequesterInfo>;
+
+    const requestInfo = requests.data.find(request => request.requestId === requestId);
+    const usernameLink = getUsernameLink(requestInfo.username, requestInfo.userFullName);
 
     await ctx.deleteMessage();
     await ctx.reply(`Запись для ${usernameLink} отклонена`, { parse_mode: 'HTML' });
     await bot.api.sendMessage(chatId, `Ваша запись отклонена :(`);
 
-    userRequestState.set(ctx.msg.chat.id, DTO.RequestState.Rejected);
+    userCurrentRequestState.delete(Number(chatId));
 };
 
 export default composer;

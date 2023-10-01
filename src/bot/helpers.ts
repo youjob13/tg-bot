@@ -1,13 +1,9 @@
-import { User } from 'grammy/types';
+import type { Chat, User } from 'grammy/types';
 
-export const getUserFullName = (user: User) => {
+export const getUserFullName = (user: User | Chat.PrivateChat) => {
     return `${user.first_name} ${user.last_name}`.trim();
 };
 
-export const USERNAME_IS_ABSENT = 'У пользователя отсутствует username' as const;
-
-export const getUsernameLink = (username: User['username'], displayName?: string) => {
-    return username != null
-        ? `<a href="https://t.me/@${username}">${displayName ?? username}</a>`
-        : displayName ?? USERNAME_IS_ABSENT;
+export const getUsernameLink = (username: User['username'], displayName: string) => {
+    return username != null ? `@${username}` : displayName;
 };

@@ -22,6 +22,14 @@ class RequesterCollection {
         }
     }
 
+    public async getRequesterInfoByRequestId(requestId: DTO.IRequesterInfo['data'][0]['requestId']) {
+        try {
+            return await this.collection.findOne<DTO.IRequesterInfo>({ 'data.requestId': requestId });
+        } catch (error) {
+            mongoLogger.error(error);
+        }
+    }
+
     public async upsertRequesterInfo(
         chatId: DTO.IRequesterInfo['chatId'],
         requesterInfoData: DTO.IRequesterInfo['data'][0],
@@ -37,12 +45,11 @@ class RequesterCollection {
         }
     }
 
-    public async approveUserRequest(chatId: DTO.IRequesterInfo['chatId'], serviceUniqueDate: string) {
+    public async approveUserRequest(chatId: DTO.IRequesterInfo['chatId'], requestId: string) {
         try {
-            return await this.collection.updateOne(
-                { chatId },
-                { $set: { 'data.$[item].isApproved': true } },
-                { arrayFilters: [{ 'item.date': serviceUniqueDate }] },
+            return await this.collection.findOneAndUpdate(
+                { chatId, 'data.requestId': requestId },
+                { $set: { 'data.$.isApproved': true } },
             );
         } catch (error) {
             mongoLogger.error(error);

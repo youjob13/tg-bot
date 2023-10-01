@@ -19,6 +19,10 @@ class ScheduleCollection {
             .map(({ timestamp }) => timestamp)
             .toArray();
     }
+
+    public async bookDate(timestamp: DTO.ISchedule['timestamp']) {
+        await this.collection.updateOne({ timestamp }, { $set: { isAvailable: false } });
+    }
 }
 
 export const scheduleCollection = new ScheduleCollection(dbPromise);

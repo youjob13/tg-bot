@@ -183,55 +183,18 @@ class TgInlineCalendar extends Calendar {
         const cr = this.colRowNavigation(date, cd);
         keyboard.resize_keyboard = true;
         keyboard.inline_keyboard = [];
-        keyboard.inline_keyboard.push([{}, {}, {}] as InlineKeyboardButton[]);
-        if (
-            !this.options.start_date ||
-            (this.options.start_date && dayjs(date).format('YYYY') > dayjs(this.options.start_date).format('YYYY'))
-        ) {
-            if (dayjs(date).subtract(1, 'year').format('YYYY') == dayjs(this.options.start_date).format('YYYY')) {
-                keyboard.inline_keyboard[0][0] = {
-                    text: '<<',
-                    callback_data:
-                        'n_' +
-                        dayjs(this.options.start_date).add(1, 'year').format('YYYY-MM') +
-                        '_--' +
-                        `_${additionalPayload}`,
-                };
-            } else {
-                keyboard.inline_keyboard[0][0] = {
-                    text: '<<',
-                    callback_data: 'n_' + dayjs(date).format('YYYY-MM') + '_--' + `_${additionalPayload}`,
-                };
-            }
-        } else {
-            keyboard.inline_keyboard[0][0] = { text: ' ', callback_data: ' ' };
-        }
-        keyboard.inline_keyboard[0][1] = {
+        keyboard.inline_keyboard.push([{}] as InlineKeyboardButton[]);
+        const now = new Date();
+        now.setDate(1);
+        now.setHours(0);
+        now.setMinutes(0);
+        now.setSeconds(0);
+
+        keyboard.inline_keyboard[0][0] = {
             text: lang.month3[this.options.language][date.getMonth()] + ' ' + date.getFullYear(),
             callback_data: ' ',
         };
-        if (
-            !this.options.stop_date ||
-            (this.options.stop_date && dayjs(this.options.stop_date).format('YYYY') > dayjs(date).format('YYYY'))
-        ) {
-            if (dayjs(date).add(1, 'year').format('YYYY') == dayjs(this.options.stop_date).format('YYYY')) {
-                keyboard.inline_keyboard[0][2] = {
-                    text: '>>',
-                    callback_data:
-                        'n_' +
-                        dayjs(this.options.stop_date).subtract(1, 'year').format('YYYY-MM') +
-                        '_++' +
-                        `_${additionalPayload}`,
-                };
-            } else {
-                keyboard.inline_keyboard[0][2] = {
-                    text: '>>',
-                    callback_data: 'n_' + dayjs(date).format('YYYY-MM') + '_++' + `_${additionalPayload}`,
-                };
-            }
-        } else {
-            keyboard.inline_keyboard[0][2] = { text: ' ', callback_data: ' ' };
-        }
+
         keyboard.inline_keyboard.push([{}, {}, {}, {}, {}, {}, {}] as InlineKeyboardButton[]);
         for (row = 0; row < 7; row++) {
             keyboard.inline_keyboard[1][row] = {
@@ -282,10 +245,12 @@ class TgInlineCalendar extends Calendar {
             }
         }
         keyboard.inline_keyboard.push([{}, {}, {}] as InlineKeyboardButton[]);
+
         if (
-            !this.options.start_date ||
-            (this.options.start_date &&
-                Math.round(dayjs(date).date(1).diff(dayjs(this.options.start_date).date(1), 'month', true)) > 0)
+            (!this.options.start_date ||
+                (this.options.start_date &&
+                    Math.round(dayjs(date).date(1).diff(dayjs(this.options.start_date).date(1), 'month', true)) > 0)) &&
+            Math.round(dayjs(date).date(1).diff(dayjs(now).date(1), 'month', true)) > 0
         ) {
             keyboard.inline_keyboard[cr - 1][0] = {
                 text: '<',

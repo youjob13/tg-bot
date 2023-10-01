@@ -1,7 +1,13 @@
-import { ServiceOption } from './service.js';
+import type { ServiceOption } from './service.js';
 
 export interface IRequesterInfo {
     chatId: number;
-    // todo: isApproved should be false by default
-    data: { serviceType: ServiceOption; date: string; isApproved?: boolean }[];
+    data: {
+        serviceType: ServiceOption;
+        date: number;
+        isApproved: boolean;
+        requestId: string;
+        username: string | undefined;
+        userFullName: string;
+    }[];
 }
