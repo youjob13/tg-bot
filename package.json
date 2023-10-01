@@ -9,7 +9,7 @@
     "start:prod": "node -r dotenv/config ./dist/index.js",
     "start": "nodemon -r dotenv/config ./src/index.ts | bunyan --color",
     "lint": "eslint src/**/*.ts",
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json && cp ./src/assets/language.json ./dist/src/assets/language.json",
     "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\"",
     "prepare": "husky install"
   },
