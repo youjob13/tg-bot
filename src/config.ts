@@ -18,7 +18,7 @@ export const MONGO_DB = {
     PASS: process.env.MONGO_PASS ?? '',
     NAME: process.env.MONGO_DB_NAME ?? 'data',
     COLLECTION: {
-        REQUESTERS: process.env.REQUESTERS_COLLECTION ?? 'requesters',
+        REQUESTS: process.env.REQUESTS_COLLECTION ?? 'requests',
         SCHEDULE: process.env.SCHEDULE_COLLECTION ?? 'schedule',
     },
 };

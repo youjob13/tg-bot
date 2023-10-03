@@ -218,14 +218,18 @@ class TgInlineCalendar extends Calendar {
                             (this.options.stop_date &&
                                 dayjs(this.options.stop_date).hour(0).diff(dayjs(date).date(d).hour(0), 'day') >= 0))
                     ) {
+                        const dateNow = +Date.now();
                         const isCurrentDateAvailable = this.availableDatesTimestamp.find(timestamp => {
                             const availableDate = dayjs(timestamp);
-                            const currentDate = dayjs(date);
+                            const currentDateFromStart = dayjs(date);
+
+                            const isCurrentOrFutureDate = timestamp - dateNow >= 0;
 
                             return (
-                                availableDate.year() === currentDate.year() &&
-                                availableDate.month() === currentDate.month() &&
-                                availableDate.date() === d
+                                availableDate.year() === currentDateFromStart.year() &&
+                                availableDate.month() === currentDateFromStart.month() &&
+                                availableDate.date() === d &&
+                                isCurrentOrFutureDate
                             );
                         });
 
@@ -293,7 +297,7 @@ class TgInlineCalendar extends Calendar {
             keyboard.inline_keyboard.push([{}, {}, {}] as InlineKeyboardButton[]);
             keyboard.inline_keyboard[d][0] = {
                 text: lang.back[this.options.language],
-                callback_data: 't_' + dayjs(datetime).format('YYYY-MM-DD') + '_back',
+                callback_data: 't_' + dayjs(datetime).format('YYYY-MM-DD') + '_back' + `_${additionalPayload}`,
             };
             keyboard.inline_keyboard[d][1] = { text: dayjs(datetime).format('YYYY-MM-DD'), callback_data: ' ' };
             keyboard.inline_keyboard[d][2] = { text: ' ', callback_data: ' ' };
@@ -321,6 +325,7 @@ class TgInlineCalendar extends Calendar {
                     start = new Date(datetime);
                 }
 
+                const dateNow = +Date.now();
                 const isCurrentDateTimeAvailable = this.availableDatesTimestamp.find(timestamp => {
                     const availableDate = dayjs(timestamp);
                     const currentDate = dayjs(datetime);
@@ -334,7 +339,9 @@ class TgInlineCalendar extends Calendar {
                         `${availableDate.hour()}:${availableDate.minute()}` ===
                         `${currentDate.hour()}:${currentDate.minute()}`;
 
-                    return isDateAvailable && isTimeAvailable;
+                    const isCurrentOrFutureTime = timestamp - dateNow >= 0;
+
+                    return isDateAvailable && isTimeAvailable && isCurrentOrFutureTime;
                 });
 
                 keyboard.inline_keyboard[i][j] =

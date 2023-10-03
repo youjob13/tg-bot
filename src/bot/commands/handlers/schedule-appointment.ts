@@ -1,10 +1,11 @@
-import dayjs from 'dayjs';
 import { Composer, Context } from 'grammy';
 import { Chat } from 'grammy/types';
 import { WithId } from 'mongodb';
 
 import * as DTO from '../../../../dto/index.js';
-import { requesterCollection, scheduleCollection } from '../../../db/handlers/index.js';
+import { requestCollection, scheduleCollection } from '../../../db/handlers/index.js';
+import { botLogger } from '../../../logger.js';
+import { formatToDate, formatToTimestamp } from '../../../shared/utils.js';
 import bot, { calendar } from '../../bot.js';
 import { getUserFullName, getUsernameLink } from '../../helpers.js';
 import { InlineQuery, ServiceByOption, selectServiceKeyboard } from '../../keyboards/index.js';
@@ -27,46 +28,58 @@ composer.on('message', async ctx => {
         await ctx.reply(
             `<b>Свободные даты:</b>
 
-${availableDates.map(timestamp => dayjs(timestamp).format('YYYY-MM-DD HH:mm')).join('\n')}`,
+${availableDates.map(formatToDate).join('\n')}`,
             { parse_mode: 'HTML' },
         );
         return;
     }
 
     if (userCurrentRequestState.get(chatId) === DTO.RequestState.InProgress) {
-        const requesterInfo = await requesterCollection.getRequesterInfo(chatId);
-        const latestServiceInfo = requesterInfo.data[requesterInfo.data.length - 1];
+        const request = await requestCollection.getLatestRequestByChatId(chatId);
+
+        await Promise.all([
+            requestCollection.insertUserCustomDataToRequest({
+                chatId,
+                requestId: request.requestId,
+                userCustomData: ctx.message.text.trim(),
+            }),
+            scheduleCollection.bookDate(request.date, `${request.chatId}|${request.requestId}`),
+        ]);
 
         await ctx.reply('Ожидайте подтверждения записи по указанным выше контактам 🤍');
 
-        const { content, options } = generateRequestFromUser({ ctx, latestServiceInfo });
+        const { content, options } = generateRequestFromUser({ ctx, request });
 
         await bot.api.sendMessage(ADMIN_ID, content, options);
     }
 });
 
 composer.on('callback_query:data', async ctx => {
-    switch (isQueryFor(ctx)) {
-        case InlineQuery.MakeAppointment: {
-            await processMakeAppointment(ctx);
-            break;
+    try {
+        switch (isQueryFor(ctx)) {
+            case InlineQuery.MakeAppointment: {
+                await processMakeAppointment(ctx);
+                break;
+            }
+            case InlineQuery.SelectService: {
+                await processSelectService(ctx);
+                break;
+            }
+            case InlineQuery.SelectDate: {
+                await processSelectDate(ctx);
+                break;
+            }
+            case InlineQuery.ApproveNewRequest: {
+                await processApproveNewRequest(ctx);
+                break;
+            }
+            case InlineQuery.RejectNewRequest: {
+                await processRejectNewRequest(ctx);
+                break;
+            }
         }
-        case InlineQuery.SelectService: {
-            await processSelectService(ctx);
-            break;
-        }
-        case InlineQuery.SelectDate: {
-            await processSelectDate(ctx);
-            break;
-        }
-        case InlineQuery.ApproveNewRequest: {
-            await processApproveNewRequest(ctx);
-            break;
-        }
-        case InlineQuery.RejectNewRequest: {
-            await processRejectNewRequest(ctx);
-            break;
-        }
+    } catch (error) {
+        botLogger.error(error);
     }
 });
 
@@ -105,11 +118,13 @@ const processSelectDate = async <TContext extends Context>(ctx: TContext) => {
 
         const chat = message.chat as Chat.PrivateChat;
         const chatId = chat.id;
+        const date = formatToTimestamp(res);
 
-        await requesterCollection.upsertRequesterInfo(chatId, {
-            requestId: generateUniqueRequestId(+new Date(res), serviceType as DTO.ServiceOption),
+        await requestCollection.createRequest({
+            chatId,
+            requestId: generateUniqueRequestId(date, serviceType as DTO.ServiceOption),
             serviceType: serviceType as DTO.ServiceOption,
-            date: +new Date(res),
+            date,
             isApproved: false,
             username: chat.username,
             userFullName: getUserFullName(chat),
@@ -125,16 +140,8 @@ const processSelectDate = async <TContext extends Context>(ctx: TContext) => {
 const processApproveNewRequest = async <TContext extends Context>(ctx: TContext) => {
     const [, chatId, requestId] = ctx.callbackQuery.data.split('|');
 
-    // todo: rework the way how store data in db
-    const requests = (await requesterCollection.approveUserRequest(
-        Number(chatId),
-        requestId,
-    )) as WithId<DTO.IRequesterInfo>;
-
-    const requestInfo = requests.data.find(request => request.requestId === requestId);
-    await scheduleCollection.bookDate(requestInfo.date);
-
-    const usernameLink = getUsernameLink(requestInfo.username, requestInfo.userFullName);
+    const request = (await requestCollection.approveUserRequest(Number(chatId), requestId)) as WithId<DTO.IRequest>;
+    const usernameLink = getUsernameLink(request.username, request.userFullName);
 
     await ctx.deleteMessage();
     await ctx.reply(`Запись для ${usernameLink} подтверждена`, { parse_mode: 'HTML' });
@@ -146,14 +153,10 @@ const processApproveNewRequest = async <TContext extends Context>(ctx: TContext)
 const processRejectNewRequest = async <TContext extends Context>(ctx: TContext) => {
     const [, chatId, requestId] = ctx.callbackQuery.data.split('|');
 
-    // todo: rework the way how store data in db
-    const requests = (await requesterCollection.approveUserRequest(
-        Number(chatId),
-        requestId,
-    )) as WithId<DTO.IRequesterInfo>;
+    const request = await requestCollection.getRequestByChatIdAndRequestId(Number(chatId), requestId);
+    await scheduleCollection.unBookDate(request.date);
 
-    const requestInfo = requests.data.find(request => request.requestId === requestId);
-    const usernameLink = getUsernameLink(requestInfo.username, requestInfo.userFullName);
+    const usernameLink = getUsernameLink(request.username, request.userFullName);
 
     await ctx.deleteMessage();
     await ctx.reply(`Запись для ${usernameLink} отклонена`, { parse_mode: 'HTML' });

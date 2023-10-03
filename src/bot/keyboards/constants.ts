@@ -9,8 +9,8 @@ export enum InlineQuery {
 }
 
 export const ServiceByOption = {
+    [ServiceOption.Medium]: 'Маникюр + покрытие (от 35€)',
     [ServiceOption.Min]: 'Маникюр (от 25€)',
-    [ServiceOption.Medium]: 'Маникюр + покрытие (от 40€)',
     [ServiceOption.Normal]: 'Наращивание ногтей 1-2 (от 50€)',
     [ServiceOption.Max]: 'Наращивание ногтей 3-4 (от 60€)',
 } as const;

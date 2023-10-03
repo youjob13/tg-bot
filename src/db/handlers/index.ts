@@ -1,2 +1,2 @@
-export { requesterCollection } from './requester.js';
+export { requestCollection } from './request.js';
 export { scheduleCollection } from './schedule.js';

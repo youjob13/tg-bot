@@ -1,6 +1,6 @@
 import * as Mongo from 'mongodb';
 
-import type * as DTO from '../../../dto/Schedule.js';
+import type * as DTO from '../../../dto/index.js';
 import * as Config from '../../config.js';
 import { dbPromise } from '../mongo.js';
 
@@ -15,13 +15,33 @@ class ScheduleCollection {
 
     public async getAvailableDates() {
         return await this.collection
-            .find<{ timestamp: DTO.ISchedule['timestamp'] }>({ isAvailable: true }, { projection: { timestamp: 1 } })
+            .find<{ timestamp: DTO.ISchedule['timestamp'] }>(
+                { isBooked: { $ne: true } },
+                { projection: { timestamp: 1 } },
+            )
             .map(({ timestamp }) => timestamp)
             .toArray();
     }
 
-    public async bookDate(timestamp: DTO.ISchedule['timestamp']) {
-        await this.collection.updateOne({ timestamp }, { $set: { isAvailable: false } });
+    public async getBookedNotNotifiedDates() {
+        return await this.collection
+            .find<{ timestamp: DTO.ISchedule['timestamp']; uniqueId: DTO.ISchedule['uniqueId'] }>(
+                { isBooked: true, isNotified: { $ne: true } },
+                { projection: { timestamp: 1, uniqueId: 1 } },
+            )
+            .toArray();
+    }
+
+    public async bookDate(timestamp: DTO.ISchedule['timestamp'], uniqueId: DTO.ISchedule['uniqueId']) {
+        await this.collection.updateOne({ timestamp }, { $set: { isBooked: true, uniqueId } });
+    }
+
+    public async unBookDate(timestamp: DTO.ISchedule['timestamp']) {
+        await this.collection.updateOne({ timestamp }, { $set: { isBooked: false, uniqueId: undefined } });
+    }
+
+    public async markDateIsNotified(uniqueId: DTO.ISchedule['uniqueId']) {
+        await this.collection.updateOne({ uniqueId }, { $set: { isNotified: true } });
     }
 }
 

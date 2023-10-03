@@ -1,4 +1,6 @@
 export interface ISchedule {
+    uniqueId: string | null;
     timestamp: number;
-    isAvailable: boolean;
+    isBooked: boolean;
+    isNotified: boolean;
 }
