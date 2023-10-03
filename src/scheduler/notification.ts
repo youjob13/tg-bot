@@ -51,6 +51,6 @@ const pushNotification = async () => {
     }
 };
 
-const job = new CronJob('*/15 * * * * *', pushNotification, null, false, 'America/Los_Angeles');
+const job = new CronJob('*/15 * * * * *', pushNotification, null, false, 'Europe/Berlin');
 
 export default job;

@@ -14,6 +14,10 @@ class RequestCollection {
         });
     }
 
+    public async removeOutdatedRequests() {
+        return await this.collection.deleteMany({ date: { $lt: Date.now() } });
+    }
+
     public async getLatestRequestByChatId(chatId: DTO.IRequest['chatId']) {
         try {
             return await this.collection.findOne<DTO.IRequest>({ chatId }, { sort: { _timestamp: -1 } });

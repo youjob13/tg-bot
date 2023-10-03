@@ -4,7 +4,8 @@ import bot from './bot/bot.js';
 import * as Config from './config.js';
 import { runMongo } from './db/mongo.js';
 import { apiLogger, botLogger, schedulerLogger } from './logger.js';
-import job from './scheduler/notification.js';
+import notificationsJob from './scheduler/notification.js';
+import removeOutdatedAppointmentsJob from './scheduler/removeOutdatedAppointments.js';
 import server from './server/server.js';
 
 server.listen(Config.PORT, async () => {
@@ -18,8 +19,11 @@ server.listen(Config.PORT, async () => {
         const handler = run(bot);
         botLogger.info('Bot started?', handler.isRunning());
 
-        job.start();
+        notificationsJob.start();
         schedulerLogger.info('Push notifications Job is activated');
+
+        removeOutdatedAppointmentsJob.start();
+        schedulerLogger.info('Remove outdated appointments Job is activated');
     } catch (err) {
         apiLogger.error(err);
     }

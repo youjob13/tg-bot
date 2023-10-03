@@ -13,10 +13,14 @@ class ScheduleCollection {
         });
     }
 
+    public async removeOutdatedDates() {
+        return await this.collection.deleteMany({ timestamp: { $lt: Date.now() } });
+    }
+
     public async getAvailableDates() {
         return await this.collection
             .find<{ timestamp: DTO.ISchedule['timestamp'] }>(
-                { isBooked: { $ne: true } },
+                { isBooked: { $ne: true }, timestamp: { $gte: Date.now() } },
                 { projection: { timestamp: 1 } },
             )
             .map(({ timestamp }) => timestamp)
