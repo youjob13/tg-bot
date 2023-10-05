@@ -10,8 +10,7 @@
     "start": "ls node_modules && node -r dotenv/config ./dist/src/index.js",
     "lint": "eslint src/**/*.ts",
     "build": "tsc -b tsconfig.json && cp ./src/assets/language.json ./dist/src/assets/language.json",
-    "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\"",
-    "prepare": "husky install"
+    "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\""
   },
   "engines": {
     "node": "18.17.0",
