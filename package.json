@@ -5,9 +5,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "precommit": "npm run build && npm run lint && npm run pretty",
+    "precommit": "npm run lint",
     "start:dev": "node -r dotenv/config ./dist/index.js",
-    "start": "node -r dotenv/config ./dist/index.js",
+    "start": "node -r dotenv/config ./app/dist/index.js",
     "lint": "eslint src/**/*.ts",
     "build": "tsc -b tsconfig.json && mkdir dist/src/assets && cp ./src/assets/language.json ./dist/src/assets/language.json",
     "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\"",
