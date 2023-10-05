@@ -19,7 +19,6 @@
   "author": "Danil_Rodionov",
   "license": "ISC",
   "devDependencies": {
-    "@grammyjs/transformer-throttler": "1.2.1",
     "@trivago/prettier-plugin-sort-imports": "4.2.0",
     "@tsconfig/node18": "18.2.2",
     "@types/bunyan": "1.8.9",
@@ -39,6 +38,7 @@
   "dependencies": {
     "@grammyjs/menu": "1.2.1",
     "@grammyjs/runner": "2.0.3",
+    "@grammyjs/transformer-throttler": "^1.2.1",
     "bunyan": "1.8.15",
     "cron": "3.0.0",
     "dayjs": "1.11.7",
