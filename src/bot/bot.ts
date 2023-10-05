@@ -36,7 +36,6 @@ const createBot = async () => {
             language: Config.TG_BOT.LANGUAGE,
             bot_api: 'grammy',
             time_selector_mod: true,
-            time_range: '07:00-23:00',
             custom_start_msg: 'Выберите дату и время 📅',
         });
 

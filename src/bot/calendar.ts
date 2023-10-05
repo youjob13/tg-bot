@@ -1,4 +1,5 @@
 import dayjs, { ManipulateType } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { readFile } from 'fs/promises';
 import type { Api, Bot, Context, RawApi } from 'grammy';
 import {
@@ -10,6 +11,11 @@ import {
 } from 'grammy/types';
 import { createRequire } from 'module';
 import { Calendar, type ICalendarOptions } from 'telegram-inline-calendar';
+
+dayjs.extend(utc);
+
+// Hamburg +2
+const TIMEZONE_OFFSET_TIMESTAMP = 2 * 60 * 60 * 1000;
 
 const lang = JSON.parse((await readFile(new URL('../assets/language.json', import.meta.url))).toString());
 
@@ -220,10 +226,10 @@ class TgInlineCalendar extends Calendar {
                     ) {
                         const dateNow = +Date.now();
                         const isCurrentDateAvailable = this.availableDatesTimestamp.find(timestamp => {
-                            const availableDate = dayjs(timestamp);
+                            const availableDate = dayjs(timestamp).utc().utcOffset(+2);
                             const currentDateFromStart = dayjs(date);
 
-                            const isCurrentOrFutureDate = timestamp - dateNow >= 0;
+                            const isCurrentOrFutureDate = timestamp + TIMEZONE_OFFSET_TIMESTAMP - dateNow >= 0;
 
                             return (
                                 availableDate.year() === currentDateFromStart.year() &&
@@ -293,6 +299,7 @@ class TgInlineCalendar extends Calendar {
             flag_start = 0,
             flag_stop = 0,
             fc = 0;
+
         if (from_calendar === true) {
             keyboard.inline_keyboard.push([{}, {}, {}] as InlineKeyboardButton[]);
             keyboard.inline_keyboard[d][0] = {
@@ -327,7 +334,7 @@ class TgInlineCalendar extends Calendar {
 
                 const dateNow = +Date.now();
                 const isCurrentDateTimeAvailable = this.availableDatesTimestamp.find(timestamp => {
-                    const availableDate = dayjs(timestamp);
+                    const availableDate = dayjs(timestamp).utc().utcOffset(+2);
                     const currentDate = dayjs(datetime);
 
                     const isDateAvailable =
@@ -339,7 +346,7 @@ class TgInlineCalendar extends Calendar {
                         `${availableDate.hour()}:${availableDate.minute()}` ===
                         `${currentDate.hour()}:${currentDate.minute()}`;
 
-                    const isCurrentOrFutureTime = timestamp - dateNow >= 0;
+                    const isCurrentOrFutureTime = timestamp + TIMEZONE_OFFSET_TIMESTAMP - dateNow >= 0;
 
                     return isDateAvailable && isTimeAvailable && isCurrentOrFutureTime;
                 });

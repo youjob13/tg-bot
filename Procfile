@@ -1,1 +1,1 @@
-worker: node -r dotenv/config ./dist/src/index.js
+worker: npm start
