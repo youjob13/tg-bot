@@ -1,2 +1,1 @@
-worker: node dist/src/index.js
-release: npm ci && npm run build
+worker: node -r dotenv/config ./dist/src/index.js
