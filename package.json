@@ -6,12 +6,16 @@
   "main": "index.js",
   "scripts": {
     "precommit": "npm run build && npm run lint && npm run pretty",
-    "start:prod": "node -r dotenv/config ./dist/index.js",
-    "start": "nodemon -r dotenv/config ./src/index.ts | bunyan --color",
+    "start:dev": "node -r dotenv/config ./dist/index.js",
+    "start": "node -r dotenv/config ./dist/index.js",
     "lint": "eslint src/**/*.ts",
-    "build": "tsc -b tsconfig.json && cp ./src/assets/language.json ./dist/src/assets/language.json",
+    "build": "tsc -b tsconfig.json && mkdir dist/src/assets && cp ./src/assets/language.json ./dist/src/assets/language.json",
     "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\"",
     "prepare": "husky install"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.6.7"
   },
   "author": "Danil_Rodionov",
   "license": "ISC",
