@@ -34,6 +34,7 @@ const createBot = async () => {
         const calendar = new TgInlineCalendar(bot, {
             date_format: 'YYYY-MM-DD HH:mm',
             language: Config.TG_BOT.LANGUAGE,
+            time_range: '08:00-19:00',
             bot_api: 'grammy',
             time_selector_mod: true,
             custom_start_msg: 'Выберите дату и время 📅',

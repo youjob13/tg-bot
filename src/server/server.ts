@@ -1,9 +1,11 @@
+import bodyParser from 'body-parser';
 import express from 'express';
 
-// import serverHandlers from './handlers/server';
+import router from './router.js';
 
 const server = express();
 
-// server.use(serverHandlers);
+server.use(bodyParser.json());
+server.use(router);
 
 export default server;

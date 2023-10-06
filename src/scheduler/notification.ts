@@ -1,7 +1,7 @@
 import { CronJob } from 'cron';
 
 import bot from '../bot/bot.js';
-import { ADMIN_ID } from '../bot/commands/handlers/constants.js';
+import { ADMIN_ID_2 } from '../bot/commands/handlers/constants.js';
 import { requestCollection, scheduleCollection } from '../db/handlers/index.js';
 import { schedulerLogger } from '../logger.js';
 import { formatToDate, getNonNullableValues } from '../shared/utils.js';
@@ -32,10 +32,12 @@ const pushNotification = async () => {
         for (const request of needNotificationRequests) {
             const userNotificationPromise = bot.api.sendMessage(
                 request.chatId,
-                `Привет! Напоминаю, что Вы записаны завтра на сеанс!🤍 \n Дата: ${formatToDate(request.date)} `,
+                `Привет🐈‍⬛ Напоминаю, что ты записана завтра на маникюр, жду тебя🤍 \n Дата: ${formatToDate(
+                    request.date,
+                )} `,
             );
             const adminNotificationPromise = bot.api.sendMessage(
-                ADMIN_ID,
+                ADMIN_ID_2,
                 `Запись на завтра:\n ${request.userFullName}\n @${request.username}\n ${formatToDate(request.date)}\n ${
                     request.userCustomData
                 }`,
@@ -51,6 +53,6 @@ const pushNotification = async () => {
     }
 };
 
-const job = new CronJob('*/15 * * * * *', pushNotification, null, false, 'Europe/Berlin');
+const job = new CronJob('0 0 * * * *', pushNotification, null, false, 'Europe/Berlin');
 
 export default job;

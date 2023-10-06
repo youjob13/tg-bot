@@ -1,5 +1,6 @@
 import dayjs, { ManipulateType } from 'dayjs';
-import utc from 'dayjs-plugin-utc';
+import tz from 'dayjs/plugin/timezone.js';
+import utc from 'dayjs/plugin/utc.js';
 import { readFile } from 'fs/promises';
 import type { Api, Bot, Context, RawApi } from 'grammy';
 import {
@@ -13,9 +14,7 @@ import { createRequire } from 'module';
 import { Calendar, type ICalendarOptions } from 'telegram-inline-calendar';
 
 dayjs.extend(utc);
-
-// Hamburg +2
-const TIMEZONE_OFFSET_TIMESTAMP = 2 * 60 * 60 * 1000;
+dayjs.extend(tz);
 
 const lang = JSON.parse((await readFile(new URL('../assets/language.json', import.meta.url))).toString());
 
@@ -195,7 +194,6 @@ class TgInlineCalendar extends Calendar {
         now.setHours(0);
         now.setMinutes(0);
         now.setSeconds(0);
-
         keyboard.inline_keyboard[0][0] = {
             text: lang.month3[this.options.language][date.getMonth()] + ' ' + date.getFullYear(),
             callback_data: ' ',
@@ -225,11 +223,12 @@ class TgInlineCalendar extends Calendar {
                                 dayjs(this.options.stop_date).hour(0).diff(dayjs(date).date(d).hour(0), 'day') >= 0))
                     ) {
                         const dateNow = +Date.now();
-                        const isCurrentDateAvailable = this.availableDatesTimestamp.find(timestamp => {
-                            const availableDate = dayjs(timestamp).utc().utcOffset(+2);
+
+                        const isCurrentDateAvailable = this.availableDatesTimestamp.find(utcTimestamp => {
+                            const availableDate = dayjs(utcTimestamp);
                             const currentDateFromStart = dayjs(date);
 
-                            const isCurrentOrFutureDate = timestamp + TIMEZONE_OFFSET_TIMESTAMP - dateNow >= 0;
+                            const isCurrentOrFutureDate = utcTimestamp - dateNow >= 0;
 
                             return (
                                 availableDate.year() === currentDateFromStart.year() &&
@@ -263,7 +262,7 @@ class TgInlineCalendar extends Calendar {
             Math.round(dayjs(date).date(1).diff(dayjs(now).date(1), 'month', true)) > 0
         ) {
             keyboard.inline_keyboard[cr - 1][0] = {
-                text: '<',
+                text: '⏪',
                 callback_data: 'n_' + dayjs(date).format('YYYY-MM') + '_-' + `_${additionalPayload}`,
             };
         } else {
@@ -276,7 +275,7 @@ class TgInlineCalendar extends Calendar {
                 Math.round(dayjs(this.options.stop_date).date(1).diff(dayjs(date).date(1), 'month', true)) > 0)
         ) {
             keyboard.inline_keyboard[cr - 1][2] = {
-                text: '>',
+                text: 'Ещё ⏩',
                 callback_data: 'n_' + dayjs(date).format('YYYY-MM') + '_+' + `_${additionalPayload}`,
             };
         } else {
@@ -290,6 +289,7 @@ class TgInlineCalendar extends Calendar {
         let start;
         const time_range = this.options.time_range.split('-');
         let datetime = date === 'undefined' ? new Date(2100, 1, 1, 0, 0, 0) : new Date(date);
+
         const type = this.options.time_step.slice(-1);
         const step = this.options.time_step.slice(0, -1);
         const keyboard = {} as InlineKeyboardMarkup & ReplyKeyboardMarkup & ReplyKeyboardRemove & ForceReply;
@@ -334,7 +334,7 @@ class TgInlineCalendar extends Calendar {
 
                 const dateNow = +Date.now();
                 const isCurrentDateTimeAvailable = this.availableDatesTimestamp.find(timestamp => {
-                    const availableDate = dayjs(timestamp).utc().utcOffset(+2);
+                    const availableDate = dayjs(timestamp);
                     const currentDate = dayjs(datetime);
 
                     const isDateAvailable =
@@ -346,7 +346,7 @@ class TgInlineCalendar extends Calendar {
                         `${availableDate.hour()}:${availableDate.minute()}` ===
                         `${currentDate.hour()}:${currentDate.minute()}`;
 
-                    const isCurrentOrFutureTime = timestamp + TIMEZONE_OFFSET_TIMESTAMP - dateNow >= 0;
+                    const isCurrentOrFutureTime = timestamp - dateNow >= 0;
 
                     return isDateAvailable && isTimeAvailable && isCurrentOrFutureTime;
                 });
@@ -378,7 +378,7 @@ class TgInlineCalendar extends Calendar {
             flag_start === 1
                 ? { text: ' ', callback_data: ' ' }
                 : {
-                      text: '<',
+                      text: '⏪',
                       callback_data:
                           't_' + dayjs(start).format('YYYY-MM-DD HH:mm') + '_' + fc + '-' + `_${additionalPayload}`,
                   };
@@ -387,7 +387,7 @@ class TgInlineCalendar extends Calendar {
             flag_stop === 1
                 ? { text: ' ', callback_data: ' ' }
                 : {
-                      text: '>',
+                      text: 'Ещё ⏩',
                       callback_data:
                           't_' + dayjs(datetime).format('YYYY-MM-DD HH:mm') + '_' + fc + '+' + `_${additionalPayload}`,
                   };

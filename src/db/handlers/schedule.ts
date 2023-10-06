@@ -13,6 +13,14 @@ class ScheduleCollection {
         });
     }
 
+    public async getDates() {
+        return await this.collection.find<DTO.ISchedule>({}).toArray();
+    }
+
+    public async setDates(dates: DTO.ISchedule[]) {
+        return await this.collection.insertMany(dates);
+    }
+
     public async removeOutdatedDates() {
         return await this.collection.deleteMany({ timestamp: { $lt: Date.now() } });
     }

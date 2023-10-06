@@ -9,7 +9,7 @@ import { formatToDate, formatToTimestamp } from '../../../shared/utils.js';
 import bot, { calendar } from '../../bot.js';
 import { getUserFullName, getUsernameLink } from '../../helpers.js';
 import { InlineQuery, ServiceByOption, selectServiceKeyboard } from '../../keyboards/index.js';
-import { ADMIN_ID } from './constants.js';
+import { ADMIN_ID, ADMIN_ID_2 } from './constants.js';
 import { extractServiceTypeFromQuery, generateRequestFromUser, generateUniqueRequestId } from './helpers.js';
 import { isQueryFor } from './isQueryFor.js';
 
@@ -22,7 +22,7 @@ composer.on('message', async ctx => {
     const chatId = ctx.message.chat.id;
 
     // todo: should be in another place
-    if (ctx.msg.text === 'getavailabledates' && chatId === ADMIN_ID) {
+    if (ctx.msg.text === 'getavailabledates' && (chatId === ADMIN_ID || chatId === ADMIN_ID_2)) {
         const availableDates = await scheduleCollection.getAvailableDates();
 
         await ctx.reply(
@@ -50,9 +50,12 @@ ${availableDates.map(formatToDate).join('\n')}`,
 
         const { content, options } = generateRequestFromUser({ ctx, request });
 
-        await bot.api.sendMessage(ADMIN_ID, content, options);
+        await bot.api.sendMessage(ADMIN_ID_2, content, options);
     }
 });
+
+// 1. show available dates for all people
+// 2. forward all messages from users to Anna
 
 composer.on('callback_query:data', async ctx => {
     try {
@@ -85,7 +88,7 @@ composer.on('callback_query:data', async ctx => {
 
 const processMakeAppointment = async <TContext extends Context>(ctx: TContext) => {
     await ctx.deleteMessage();
-    await ctx.reply('Выберите услугу 💅', { reply_markup: selectServiceKeyboard });
+    await ctx.reply('Выбрать услугу 💅', { reply_markup: selectServiceKeyboard });
 };
 
 const processSelectService = async <TContext extends Context>(ctx: TContext) => {
@@ -131,7 +134,7 @@ const processSelectDate = async <TContext extends Context>(ctx: TContext) => {
         });
 
         await ctx.reply('Вы выбрали дату: ' + res);
-        await ctx.reply('Введите ник в instagram / номер телефона и имя для подтверждения записи: ');
+        await ctx.reply('Введите номер телефона/ник в Instagram и имя для подтверждения записи🫶🏻');
 
         userCurrentRequestState.set(chatId, DTO.RequestState.InProgress);
     }
@@ -145,7 +148,13 @@ const processApproveNewRequest = async <TContext extends Context>(ctx: TContext)
 
     await ctx.deleteMessage();
     await ctx.reply(`Запись для ${usernameLink} подтверждена`, { parse_mode: 'HTML' });
-    await bot.api.sendMessage(chatId, `Ваша запись подтверждена`);
+    await bot.api.sendMessage(
+        chatId,
+        `Ваша запись подтверждена, жду Вас ${formatToDate(
+            request.date,
+        )} по адресу:\nHagenbeckstraße 50\nU2 Lutterothstraße (5 минут пешком от станции) 🫶🏻`,
+    );
+    await bot.api.sendMessage(chatId, `В случае отмены записи пиши в Instagram annushkka.nails 🤍`);
 
     userCurrentRequestState.delete(Number(chatId));
 };
