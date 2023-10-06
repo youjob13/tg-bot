@@ -1,5 +1,5 @@
 import dayjs, { ManipulateType } from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import utc from 'dayjs-plugin-utc';
 import { readFile } from 'fs/promises';
 import type { Api, Bot, Context, RawApi } from 'grammy';
 import {
