@@ -21,6 +21,8 @@ const userCurrentRequestState = new Map<number, DTO.RequestState>();
 composer.on('message', async ctx => {
     const chatId = ctx.message.chat.id;
 
+    botLogger.info(`New message from ${chatId}`, ctx.msg);
+
     // todo: should be in another place
     if (ctx.msg.text === 'getavailabledates' && (chatId === ADMIN_ID || chatId === ADMIN_ID_2)) {
         const availableDates = await scheduleCollection.getAvailableDates();
@@ -57,6 +59,42 @@ ${availableDates.map(formatToDate).join('\n')}`,
                 getUserFullName(ctx.message.chat as Chat.PrivateChat),
             )}:\n${ctx.msg.text}`,
         );
+    } else if (ctx.msg.voice) {
+        await bot.api.sendMessage(
+            ADMIN_ID_2,
+            `Новое сообщение от ${getUsernameLink(
+                ctx.message.from.username,
+                getUserFullName(ctx.message.chat as Chat.PrivateChat),
+            )}:\n${ctx.msg.caption ?? ''}`,
+        );
+        await bot.api.sendVoice(ADMIN_ID_2, ctx.msg.voice.file_id);
+    } else if (ctx.msg.photo) {
+        await bot.api.sendMessage(
+            ADMIN_ID_2,
+            `Новое сообщение от ${getUsernameLink(
+                ctx.message.from.username,
+                getUserFullName(ctx.message.chat as Chat.PrivateChat),
+            )}:\n${ctx.msg.caption ?? ''}`,
+        );
+        await bot.api.sendPhoto(ADMIN_ID_2, ctx.msg.photo[ctx.msg.photo.length - 1].file_id);
+    } else if (ctx.msg.video) {
+        await bot.api.sendMessage(
+            ADMIN_ID_2,
+            `Новое сообщение от ${getUsernameLink(
+                ctx.message.from.username,
+                getUserFullName(ctx.message.chat as Chat.PrivateChat),
+            )}:\n${ctx.msg.caption ?? ''}`,
+        );
+        await bot.api.sendVideo(ADMIN_ID_2, ctx.msg.video.file_id);
+    } else if (ctx.msg.document) {
+        await bot.api.sendMessage(
+            ADMIN_ID_2,
+            `Новое сообщение от ${getUsernameLink(
+                ctx.message.from.username,
+                getUserFullName(ctx.message.chat as Chat.PrivateChat),
+            )}:\n${ctx.msg.caption ?? ''}`,
+        );
+        await bot.api.sendDocument(ADMIN_ID_2, ctx.msg.document.file_id);
     }
 });
 
@@ -151,7 +189,7 @@ const processApproveNewRequest = async <TContext extends Context>(ctx: TContext)
     const request = (await requestCollection.approveUserRequest(Number(chatId), requestId)) as WithId<DTO.IRequest>;
     const usernameLink = getUsernameLink(request.username, request.userFullName);
 
-    await ctx.deleteMessage();
+    await ctx.editMessageReplyMarkup(undefined);
     await ctx.reply(`Запись для ${usernameLink} подтверждена`, { parse_mode: 'HTML' });
     await bot.api.sendMessage(
         chatId,
