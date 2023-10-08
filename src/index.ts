@@ -3,7 +3,7 @@ import { run } from '@grammyjs/runner';
 import bot from './bot/bot.js';
 import * as Config from './config.js';
 import { runMongo } from './db/mongo.js';
-import { apiLogger, botLogger, schedulerLogger } from './logger.js';
+import { apiLogger, botLogger, mongoLogger, schedulerLogger } from './logger.js';
 import notificationsJob from './scheduler/notification.js';
 import removeOutdatedAppointmentsJob from './scheduler/removeOutdatedAppointments.js';
 import server from './server/server.js';
@@ -13,7 +13,7 @@ server.listen(Config.PORT, async () => {
         apiLogger.info('Server listening on port', Config.PORT);
 
         await runMongo().then(() => {
-            apiLogger.info('MongoDB connected');
+            mongoLogger.info('MongoDB connected');
         });
 
         const handler = run(bot);

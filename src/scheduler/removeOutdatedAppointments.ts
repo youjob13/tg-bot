@@ -1,5 +1,6 @@
 import { CronJob } from 'cron';
 
+import * as Config from '../config.js';
 import { requestCollection, scheduleCollection } from '../db/handlers/index.js';
 import { schedulerLogger } from '../logger.js';
 
@@ -25,6 +26,6 @@ const removeOutdatedAppointments = async () => {
 };
 
 // job runs every hour
-const job = new CronJob('0 0 * * * *', removeOutdatedAppointments, null, false, 'Europe/Berlin');
+const job = new CronJob('0 0 * * * *', removeOutdatedAppointments, null, false, Config.TZ);
 
 export default job;

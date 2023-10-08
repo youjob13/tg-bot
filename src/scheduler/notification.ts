@@ -2,6 +2,7 @@ import { CronJob } from 'cron';
 
 import bot from '../bot/bot.js';
 import { ADMIN_ID_2 } from '../bot/commands/handlers/constants.js';
+import * as Config from '../config.js';
 import { requestCollection, scheduleCollection } from '../db/handlers/index.js';
 import { schedulerLogger } from '../logger.js';
 import { formatToDate, getNonNullableValues } from '../shared/utils.js';
@@ -32,7 +33,7 @@ const pushNotification = async () => {
         for (const request of needNotificationRequests) {
             const userNotificationPromise = bot.api.sendMessage(
                 request.chatId,
-                `Привет🐈‍⬛ Напоминаю, что ты записана завтра на маникюр, жду тебя🤍 \n Дата: ${formatToDate(
+                `Привет🐈‍⬛ Напоминаю, что ты записана завтра на маникюр, жду тебя🤍 \nДата: ${formatToDate(
                     request.date,
                 )} `,
             );
@@ -53,6 +54,6 @@ const pushNotification = async () => {
     }
 };
 
-const job = new CronJob('0 0 * * * *', pushNotification, null, false, 'Europe/Berlin');
+const job = new CronJob('0 0 * * * *', pushNotification, null, false, Config.TZ);
 
 export default job;

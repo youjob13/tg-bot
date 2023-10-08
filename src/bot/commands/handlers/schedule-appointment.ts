@@ -32,9 +32,7 @@ ${availableDates.map(formatToDate).join('\n')}`,
             { parse_mode: 'HTML' },
         );
         return;
-    }
-
-    if (userCurrentRequestState.get(chatId) === DTO.RequestState.InProgress) {
+    } else if (userCurrentRequestState.get(chatId) === DTO.RequestState.InProgress) {
         const request = await requestCollection.getLatestRequestByChatId(chatId);
 
         await Promise.all([
@@ -51,11 +49,18 @@ ${availableDates.map(formatToDate).join('\n')}`,
         const { content, options } = generateRequestFromUser({ ctx, request });
 
         await bot.api.sendMessage(ADMIN_ID_2, content, options);
+    } else if (ctx.msg.text) {
+        await bot.api.sendMessage(
+            ADMIN_ID_2,
+            `Новое сообщение от ${getUsernameLink(
+                ctx.message.from.username,
+                getUserFullName(ctx.message.chat as Chat.PrivateChat),
+            )}:\n${ctx.msg.text}`,
+        );
     }
 });
 
 // 1. show available dates for all people
-// 2. forward all messages from users to Anna
 
 composer.on('callback_query:data', async ctx => {
     try {
@@ -133,7 +138,7 @@ const processSelectDate = async <TContext extends Context>(ctx: TContext) => {
             userFullName: getUserFullName(chat),
         });
 
-        await ctx.reply('Вы выбрали дату: ' + res);
+        await ctx.reply('Вы выбрали дату: ' + formatToDate(res));
         await ctx.reply('Введите номер телефона/ник в Instagram и имя для подтверждения записи🫶🏻');
 
         userCurrentRequestState.set(chatId, DTO.RequestState.InProgress);
@@ -150,7 +155,7 @@ const processApproveNewRequest = async <TContext extends Context>(ctx: TContext)
     await ctx.reply(`Запись для ${usernameLink} подтверждена`, { parse_mode: 'HTML' });
     await bot.api.sendMessage(
         chatId,
-        `Ваша запись подтверждена, жду Вас ${formatToDate(
+        `Ваша запись подтверждена, жду Вас в ${formatToDate(
             request.date,
         )} по адресу:\nHagenbeckstraße 50\nU2 Lutterothstraße (5 минут пешком от станции) 🫶🏻`,
     );

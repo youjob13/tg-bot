@@ -22,3 +22,5 @@ export const MONGO_DB = {
         SCHEDULE: process.env.SCHEDULE_COLLECTION ?? 'schedule',
     },
 };
+
+export const TZ = process.env.APP_TZ ?? 'Europe/Berlin';

@@ -1,13 +1,10 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import { DateTime } from 'luxon';
+import { StatusCodes } from 'http-status-codes';
 
 import type * as DTO from '../../dto/index.js';
 import { scheduleCollection } from '../db/handlers/index.js';
-
-const formatStringDateToTimestamp = (date: string) => {
-    return DateTime.fromFormat(date, 'yyyy-MM-dd HH:mm', { zone: 'Europe/Berlin' }).toMillis();
-};
+import { formatStringDateToTimestamp } from '../shared/utils.js';
 
 const router = express.Router();
 router.post(
@@ -28,7 +25,7 @@ router.post(
             await scheduleCollection.setDates(formattedDates);
         }
 
-        res.sendStatus(200);
+        res.sendStatus(StatusCodes.CREATED);
     }),
 );
 
