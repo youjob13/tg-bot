@@ -20,6 +20,7 @@ export const MONGO_DB = {
     COLLECTION: {
         REQUESTS: process.env.REQUESTS_COLLECTION ?? 'requests',
         SCHEDULE: process.env.SCHEDULE_COLLECTION ?? 'schedule',
+        SCHEDULE_TEST: process.env.SCHEDULE_COLLECTION_TEST ?? 'schedule_test',
     },
 };
 
