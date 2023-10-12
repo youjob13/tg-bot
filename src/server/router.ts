@@ -42,4 +42,22 @@ router.get(
     }),
 );
 
+router.get(
+    '/api/schedule/booked',
+    asyncHandler(async (req, res) => {
+        const dates = await scheduleTestCollection.getBookedDates();
+
+        res.json(dates);
+    }),
+);
+
+router.get(
+    '/api/schedule/available',
+    asyncHandler(async (req, res) => {
+        const dates = await scheduleTestCollection.getAvailableDates();
+
+        res.json(dates);
+    }),
+);
+
 export default router;
