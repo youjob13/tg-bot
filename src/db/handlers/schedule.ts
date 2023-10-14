@@ -55,6 +55,20 @@ class ScheduleCollection {
     public async markDateIsNotified(uniqueId: DTO.ISchedule['uniqueId']) {
         await this.collection.updateOne({ uniqueId }, { $set: { isNotified: true } });
     }
+
+    public async getBookedDates() {
+        return await this.collection.find<DTO.ISchedule>({ isBooked: true }).toArray();
+    }
+
+    public async insertDates(dates: DTO.ISchedule[]) {
+        return await this.collection.insertMany(dates);
+    }
+
+    public async removeDates(dates: DTO.ISchedule[]) {
+        return await this.collection.bulkWrite(
+            dates.map(date => ({ deleteOne: { filter: { timestamp: date.timestamp } } })),
+        );
+    }
 }
 
 export const scheduleCollection = new ScheduleCollection(dbPromise);

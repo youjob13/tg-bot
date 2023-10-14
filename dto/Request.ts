@@ -1,4 +1,4 @@
-import { IService } from './Service';
+import { IService } from './Service.js';
 
 export enum RequestState {
     InProgress = 'in_progress',

@@ -1,8 +1,8 @@
 import { InlineKeyboard } from 'grammy';
 
 import * as DTO from '../../../dto/index.js';
-import { InlineQuery } from './constants';
-import { KeyboardData } from './models';
+import { InlineQuery } from './constants.js';
+import { KeyboardData } from './models.js';
 
 export const createInlineKeyboard = (labelDataPairs: Array<Array<string>>, withNewRows = true) => {
     return labelDataPairs.reduce(

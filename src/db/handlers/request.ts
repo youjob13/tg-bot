@@ -18,6 +18,18 @@ class RequestCollection {
         return await this.collection.deleteMany({ date: { $lt: Date.now() } });
     }
 
+    public async removeRequest(date: DTO.IRequest['date']) {
+        return await this.collection.deleteOne({ date });
+    }
+
+    public async getCustomersByChatIds(chatIds: DTO.IRequest['chatId'][]) {
+        try {
+            return await this.collection.find({ chatId: { $in: chatIds } }, { sort: { _timestamp: -1 } }).toArray();
+        } catch (error) {
+            mongoLogger.error(error);
+        }
+    }
+
     public async getLatestRequestByChatId(chatId: DTO.IRequest['chatId']) {
         try {
             return await this.collection.findOne<DTO.IRequest>({ chatId }, { sort: { _timestamp: -1 } });
