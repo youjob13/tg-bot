@@ -1,4 +1,4 @@
-import { ServiceOption } from './service';
+import { IService } from './Service';
 
 export enum RequestState {
     InProgress = 'in_progress',
@@ -9,7 +9,7 @@ export enum RequestState {
 
 export interface IRequest {
     chatId: number;
-    serviceType: ServiceOption;
+    serviceType: IService['key'];
     date: number;
     isApproved: boolean;
     requestId: string;

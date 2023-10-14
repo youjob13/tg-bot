@@ -2,7 +2,8 @@ import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 
-import { scheduleTestCollection } from '../db/handlers/index.js';
+import * as DTO from '../../dto/index.js';
+import { scheduleTestCollection, servicesCollection } from '../db/handlers/index.js';
 import { apiLogger } from '../logger.js';
 import { formatStringDateToTimestamp } from '../shared/utils.js';
 
@@ -38,7 +39,7 @@ router.get(
     asyncHandler(async (req, res) => {
         const dates = await scheduleTestCollection.getDates();
 
-        res.json(dates);
+        res.send(dates);
     }),
 );
 
@@ -47,7 +48,7 @@ router.get(
     asyncHandler(async (req, res) => {
         const dates = await scheduleTestCollection.getBookedDates();
 
-        res.json(dates);
+        res.send(dates);
     }),
 );
 
@@ -56,7 +57,33 @@ router.get(
     asyncHandler(async (req, res) => {
         const dates = await scheduleTestCollection.getAvailableDates();
 
-        res.json(dates);
+        res.send(dates);
+    }),
+);
+
+router.get(
+    '/api/services',
+    asyncHandler(async (req, res) => {
+        const services = await servicesCollection.getServices();
+
+        res.send(services);
+    }),
+);
+
+router.post(
+    '/api/services',
+    asyncHandler(async (req, res) => {
+        const { services: servicesEntries } = req.body as { services: DTO.IService[] };
+        const servicesFromDB = await servicesCollection.getServices();
+
+        const servicesToRemove = servicesFromDB.filter(service => !servicesEntries.find(s => s.key === service.key));
+
+        const removedServicesPromises = servicesCollection.removeServices(servicesToRemove);
+        const updatedServicesPromises = servicesCollection.updateServices(servicesEntries);
+
+        await Promise.all([removedServicesPromises, updatedServicesPromises]);
+
+        res.sendStatus(StatusCodes.OK);
     }),
 );
 

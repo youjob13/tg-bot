@@ -1,5 +1,6 @@
 import { InlineKeyboard } from 'grammy';
 
+import * as DTO from '../../../dto/index.js';
 import { InlineQuery } from './constants';
 import { KeyboardData } from './models';
 
@@ -10,13 +11,9 @@ export const createInlineKeyboard = (labelDataPairs: Array<Array<string>>, withN
         new InlineKeyboard(),
     );
 };
-
-export const makeInlineQueriesWithOptions = <TOption extends string>(
-    serviceByOption: Record<TOption, string>,
-    inlineQuery: InlineQuery,
-) => {
-    return Object.entries<string>(serviceByOption).reduce<KeyboardData>((acc, [option, service]) => {
-        acc.push([service, `${inlineQuery}:${option}` as InlineQuery]);
+export const makeInlineQueriesWithOptions = (serviceList: DTO.IService[], inlineQuery: InlineQuery) => {
+    return serviceList.reduce<KeyboardData>((acc, { key, name }) => {
+        acc.push([name, `${inlineQuery}:${key}` as InlineQuery]);
         return acc;
     }, []);
 };

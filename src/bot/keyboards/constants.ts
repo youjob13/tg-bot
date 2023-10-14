@@ -1,5 +1,3 @@
-import { ServiceOption } from '../../../dto/index.js';
-
 export enum InlineQuery {
     MakeAppointment = 'make_appointment_query',
     SelectService = 'select_service_query',
@@ -7,10 +5,3 @@ export enum InlineQuery {
     ApproveNewRequest = 'approve_new_request_query',
     RejectNewRequest = 'reject_new_request_query',
 }
-
-export const ServiceByOption = {
-    [ServiceOption.Medium]: 'Маникюр + покрытие (от 35€)',
-    [ServiceOption.Min]: 'Маникюр (от 25€)',
-    [ServiceOption.Normal]: 'Наращивание ногтей 1-2 (от 45€)',
-    [ServiceOption.Max]: 'Наращивание ногтей 3-4 (от 55€)',
-} as const;

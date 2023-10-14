@@ -3,12 +3,12 @@ import { Chat } from 'grammy/types';
 import { WithId } from 'mongodb';
 
 import * as DTO from '../../../../dto/index.js';
-import { requestCollection, scheduleCollection } from '../../../db/handlers/index.js';
+import { requestCollection, scheduleCollection, servicesCollection } from '../../../db/handlers/index.js';
 import { botLogger } from '../../../logger.js';
 import { formatToDate, formatToTimestamp } from '../../../shared/utils.js';
 import bot, { calendar } from '../../bot.js';
 import { getUserFullName, getUsernameLink } from '../../helpers.js';
-import { InlineQuery, ServiceByOption, selectServiceKeyboard } from '../../keyboards/index.js';
+import { InlineQuery, createInlineKeyboard, makeInlineQueriesWithOptions } from '../../keyboards/index.js';
 import { ADMIN_ID, ADMIN_ID_2 } from './constants.js';
 import { extractServiceTypeFromQuery, generateRequestFromUser, generateUniqueRequestId } from './helpers.js';
 import { isQueryFor } from './isQueryFor.js';
@@ -37,18 +37,19 @@ ${availableDates.map(formatToDate).join('\n')}`,
     } else if (userCurrentRequestState.get(chatId) === DTO.RequestState.InProgress) {
         const request = await requestCollection.getLatestRequestByChatId(chatId);
 
-        await Promise.all([
+        const [, , selectedService] = await Promise.all([
             requestCollection.insertUserCustomDataToRequest({
                 chatId,
                 requestId: request.requestId,
                 userCustomData: ctx.message.text.trim(),
             }),
             scheduleCollection.bookDate(request.date, `${request.chatId}|${request.requestId}`),
+            servicesCollection.getService(request.serviceType),
         ]);
 
         await ctx.reply('Ожидайте подтверждения записи по указанным выше контактам 🤍');
 
-        const { content, options } = generateRequestFromUser({ ctx, request });
+        const { content, options } = generateRequestFromUser({ ctx, request, selectedService });
 
         await bot.api.sendMessage(ADMIN_ID_2, content, options);
     } else if (ctx.msg.text) {
@@ -131,6 +132,11 @@ composer.on('callback_query:data', async ctx => {
 
 const processMakeAppointment = async <TContext extends Context>(ctx: TContext) => {
     await ctx.deleteMessage();
+
+    const serviceList = await servicesCollection.getServices();
+    const servicesData = makeInlineQueriesWithOptions(serviceList, InlineQuery.SelectService);
+    const selectServiceKeyboard = createInlineKeyboard(servicesData);
+
     await ctx.reply('Выбрать услугу 💅', { reply_markup: selectServiceKeyboard });
 };
 
@@ -142,7 +148,7 @@ const processSelectService = async <TContext extends Context>(ctx: TContext) => 
         return;
     }
 
-    const { value, displayName } = extractServiceTypeFromQuery(ctx, ServiceByOption);
+    const { value, displayName } = await extractServiceTypeFromQuery(ctx);
 
     const availableDates = await scheduleCollection.getAvailableDates();
 
@@ -168,8 +174,8 @@ const processSelectDate = async <TContext extends Context>(ctx: TContext) => {
 
         await requestCollection.createRequest({
             chatId,
-            requestId: generateUniqueRequestId(date, serviceType as DTO.ServiceOption),
-            serviceType: serviceType as DTO.ServiceOption,
+            requestId: generateUniqueRequestId(date, serviceType as DTO.IService['key']),
+            serviceType: serviceType as DTO.IService['key'],
             date,
             isApproved: false,
             username: chat.username,

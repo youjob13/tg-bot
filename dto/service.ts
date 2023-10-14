@@ -1,6 +1,7 @@
-export enum ServiceOption {
-    Min = 'min',
-    Medium = 'medium',
-    Normal = 'normal',
-    Max = 'max',
-}
+import * as MongoDB from 'mongodb';
+
+export type IService = {
+    _id: MongoDB.ObjectId;
+    key: string;
+    name: string;
+};
