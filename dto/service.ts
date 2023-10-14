@@ -1,7 +1,7 @@
 import * as MongoDB from 'mongodb';
 
-export type IService = {
+export interface IService {
     _id: MongoDB.ObjectId;
     key: string;
     name: string;
-};
+}
