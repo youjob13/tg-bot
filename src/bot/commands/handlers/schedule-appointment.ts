@@ -37,13 +37,12 @@ ${availableDates.map(formatToDate).join('\n')}`,
     } else if (userCurrentRequestState.get(chatId) === DTO.RequestState.InProgress) {
         const request = await requestCollection.getLatestRequestByChatId(chatId);
 
-        const [, , selectedService] = await Promise.all([
+        const [, selectedService] = await Promise.all([
             requestCollection.insertUserCustomDataToRequest({
                 chatId,
                 requestId: request.requestId,
                 userCustomData: ctx.message.text.trim(),
             }),
-            scheduleCollection.bookDate(request.date, `${request.chatId}|${request.requestId}`),
             servicesCollection.getService(request.serviceType),
         ]);
 
@@ -124,6 +123,10 @@ composer.on('callback_query:data', async ctx => {
                 await processRejectNewRequest(ctx);
                 break;
             }
+            case InlineQuery.RejectPartialNewRequest: {
+                await processRejectNewRequest(ctx, false);
+                break;
+            }
         }
     } catch (error) {
         botLogger.error(error);
@@ -171,16 +174,21 @@ const processSelectDate = async <TContext extends Context>(ctx: TContext) => {
         const chat = message.chat as Chat.PrivateChat;
         const chatId = chat.id;
         const date = formatToTimestamp(res);
+        const requestId = generateUniqueRequestId(date, serviceType as DTO.IService['key']);
 
-        await requestCollection.createRequest({
+        const createRequestPromise = requestCollection.createRequest({
             chatId,
-            requestId: generateUniqueRequestId(date, serviceType as DTO.IService['key']),
+            requestId,
             serviceType: serviceType as DTO.IService['key'],
             date,
             isApproved: false,
             username: chat.username,
             userFullName: getUserFullName(chat),
         });
+
+        const bookDatePromise = scheduleCollection.bookDate(date, `${chatId}|${requestId}`);
+
+        await Promise.all([createRequestPromise, bookDatePromise]);
 
         await ctx.reply('Вы выбрали дату: ' + formatToDate(res));
         await ctx.reply('Введите номер телефона/ник в Instagram и имя для подтверждения записи🫶🏻');
@@ -208,7 +216,7 @@ const processApproveNewRequest = async <TContext extends Context>(ctx: TContext)
     userCurrentRequestState.delete(Number(chatId));
 };
 
-const processRejectNewRequest = async <TContext extends Context>(ctx: TContext) => {
+const processRejectNewRequest = async <TContext extends Context>(ctx: TContext, needNotifyUser: boolean = true) => {
     const [, chatId, requestId] = ctx.callbackQuery.data.split('|');
 
     const request = await requestCollection.getRequestByChatIdAndRequestId(Number(chatId), requestId);
@@ -218,7 +226,10 @@ const processRejectNewRequest = async <TContext extends Context>(ctx: TContext) 
 
     await ctx.deleteMessage();
     await ctx.reply(`Запись для ${usernameLink} отклонена`, { parse_mode: 'HTML' });
-    await bot.api.sendMessage(chatId, `Ваша запись отклонена :(`);
+
+    if (needNotifyUser) {
+        await bot.api.sendMessage(chatId, `Ваша запись отклонена :(`);
+    }
 
     userCurrentRequestState.delete(Number(chatId));
 };

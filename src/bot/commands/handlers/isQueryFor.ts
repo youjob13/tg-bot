@@ -35,4 +35,10 @@ export const isQueryFor = (ctx: Context) => {
     if (isRejectNewRequestQuery) {
         return InlineQuery.RejectNewRequest;
     }
+
+    const isRejectPartialNewRequestQuery = callbackQueryData.includes(InlineQuery.RejectPartialNewRequest);
+
+    if (isRejectPartialNewRequestQuery) {
+        return InlineQuery.RejectPartialNewRequest;
+    }
 };

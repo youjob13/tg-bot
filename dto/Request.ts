@@ -8,6 +8,7 @@ export enum RequestState {
 }
 
 export interface IRequest {
+    _timestamp?: number;
     chatId: number;
     serviceType: IService['key'];
     date: number;

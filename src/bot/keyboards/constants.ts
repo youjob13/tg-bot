@@ -4,4 +4,5 @@ export enum InlineQuery {
     SelectDate = 'select_date_query',
     ApproveNewRequest = 'approve_new_request_query',
     RejectNewRequest = 'reject_new_request_query',
+    RejectPartialNewRequest = 'reject_partial_new_request_query',
 }

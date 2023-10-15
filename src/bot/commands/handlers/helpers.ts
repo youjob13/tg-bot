@@ -17,6 +17,15 @@ const createDataForRequestInlineQuery = (
     return data;
 };
 
+const createDataForPartialRequestInlineQuery = (
+    inlineQuery: InlineQuery.ApproveNewRequest | InlineQuery.RejectNewRequest | InlineQuery.RejectPartialNewRequest,
+    request: DTO.IRequest,
+) => {
+    const uniqueRequestId = generateUniqueRequestId(request.date, request.serviceType);
+    const data = `${inlineQuery}|${request.chatId}|${uniqueRequestId}`.trim();
+    return data;
+};
+
 export const generateRequestFromUser = ({
     ctx,
     request,
@@ -62,4 +71,39 @@ export const extractServiceTypeFromQuery = async (ctx: Context) => {
 
 export const generateUniqueRequestId = (date: number, serviceType: DTO.IService['key']) => {
     return `${date}_${serviceType}`;
+};
+
+export const generatePartialRequestFromUser = ({
+    request,
+    selectedService,
+}: {
+    request: DTO.IRequest;
+    selectedService: DTO.IService;
+}) => {
+    const usernameLink = getUsernameLink(request.username, request.userFullName);
+
+    const content = `
+    <b>Пользователь сделал запись, но не ввёл контактные данные, попробовать найти пользователя по существующим данным:</b>
+
+Имя пользователя в телеграм: ${request.userFullName}
+Телеграм username: ${usernameLink}
+Услуга: ${selectedService.name}
+Дата: ${formatToDate(request.date)}
+
+Или подтвердить / отклонить запись (в случае отказа, пользователь не будет уведомлен)`;
+
+    const inlineKeyboard = createInlineKeyboard([
+        [`Подтвердить запись`, createDataForPartialRequestInlineQuery(InlineQuery.ApproveNewRequest, request)],
+        [`Отклонить запись`, createDataForPartialRequestInlineQuery(InlineQuery.RejectPartialNewRequest, request)],
+    ]);
+
+    const options: Other<RawApi, 'sendMessage', 'text' | 'chat_id'> = {
+        parse_mode: 'HTML',
+        reply_markup: inlineKeyboard,
+    };
+
+    return {
+        content,
+        options,
+    };
 };

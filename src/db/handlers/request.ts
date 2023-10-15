@@ -65,6 +65,16 @@ class RequestCollection {
         }
     }
 
+    public async getNonApprovedRequestsWithoutUserCustomData() {
+        return await this.collection
+            .find<DTO.IRequest>({
+                isApproved: false,
+                userCustomData: { $exists: false },
+                date: { $gte: Date.now() },
+            })
+            .toArray();
+    }
+
     public async insertUserCustomDataToRequest({
         chatId,
         requestId,

@@ -40,7 +40,7 @@ const pushNotification = async () => {
             const adminNotificationPromise = bot.api.sendMessage(
                 ADMIN_ID_2,
                 `Запись на завтра:\n ${request.userFullName}\n @${request.username}\n ${formatToDate(request.date)}\n ${
-                    request.userCustomData
+                    request.userCustomData ?? '[Контактные данные не указаны]'
                 }`,
             );
             const markDateAsNotifiedPromise = scheduleCollection.markDateIsNotified(

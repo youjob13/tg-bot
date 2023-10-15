@@ -4,6 +4,7 @@ import bot from './bot/bot.js';
 import * as Config from './config.js';
 import { runMongo } from './db/mongo.js';
 import { apiLogger, botLogger, mongoLogger, schedulerLogger } from './logger.js';
+import checkNonApprovedRequestsJob from './scheduler/checkNonApprovedRequests.js';
 import notificationsJob from './scheduler/notification.js';
 import removeOutdatedAppointmentsJob from './scheduler/removeOutdatedAppointments.js';
 import server from './server/server.js';
@@ -24,6 +25,9 @@ server.listen(Config.PORT, async () => {
 
         removeOutdatedAppointmentsJob.start();
         schedulerLogger.info('Remove outdated appointments Job is activated');
+
+        checkNonApprovedRequestsJob.start();
+        schedulerLogger.info('Check non approved requests Job is activated');
     } catch (err) {
         apiLogger.error(err);
     }
