@@ -31,8 +31,16 @@ const checkNonApprovedRequests = async () => {
 
             const adminNotificationPromise = bot.api.sendMessage(ADMIN_ID_2, content, options);
             const adminNotificationPromise2 = bot.api.sendMessage(ADMIN_ID, content, options);
+            const markPartialRequestAsNotifiedPromise = requestCollection.markPartialRequestAsNotified(
+                nonApprovedRequest.requestId,
+                nonApprovedRequest.chatId,
+            );
 
-            await Promise.all([adminNotificationPromise, adminNotificationPromise2]);
+            await Promise.all([
+                adminNotificationPromise,
+                adminNotificationPromise2,
+                markPartialRequestAsNotifiedPromise,
+            ]);
         }
     } catch (error) {
         schedulerLogger.error('error', error);

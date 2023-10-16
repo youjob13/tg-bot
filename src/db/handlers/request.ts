@@ -70,9 +70,17 @@ class RequestCollection {
             .find<DTO.IRequest>({
                 isApproved: false,
                 userCustomData: { $exists: false },
+                isNotifiedAboutPartialRequest: { $ne: true },
                 date: { $gte: Date.now() },
             })
             .toArray();
+    }
+
+    public async markPartialRequestAsNotified(requestId: DTO.IRequest['requestId'], chatId: DTO.IRequest['chatId']) {
+        return await this.collection.updateOne(
+            { requestId, chatId },
+            { $set: { isNotifiedAboutPartialRequest: true } },
+        );
     }
 
     public async insertUserCustomDataToRequest({

@@ -13,6 +13,7 @@ export interface IRequest {
     serviceType: IService['key'];
     date: number;
     isApproved: boolean;
+    isNotifiedAboutPartialRequest?: boolean;
     requestId: string;
     username: string | undefined;
     userFullName: string;

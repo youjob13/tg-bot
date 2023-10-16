@@ -4,6 +4,7 @@ import { WithId } from 'mongodb';
 
 import * as DTO from '../../../../dto/index.js';
 import { requestCollection, scheduleCollection, servicesCollection } from '../../../db/handlers/index.js';
+import { userCurrentRequestState } from '../../../db/inMemory.js';
 import { botLogger } from '../../../logger.js';
 import { formatToDate, formatToTimestamp } from '../../../shared/utils.js';
 import bot, { calendar } from '../../bot.js';
@@ -14,9 +15,7 @@ import { extractServiceTypeFromQuery, generateRequestFromUser, generateUniqueReq
 import { isQueryFor } from './isQueryFor.js';
 
 const composer = new Composer();
-// if user don't answer, request will in progress until server down
-// maybe it makes sense to store in db
-const userCurrentRequestState = new Map<number, DTO.RequestState>();
+
 // todo: find better approach then message event to get user info
 composer.on('message', async ctx => {
     const chatId = ctx.message.chat.id;

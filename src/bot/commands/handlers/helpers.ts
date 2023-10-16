@@ -90,7 +90,9 @@ export const generatePartialRequestFromUser = ({
 Услуга: ${selectedService.name}
 Дата: ${formatToDate(request.date)}
 
-Или подтвердить / отклонить запись (в случае отказа, пользователь не будет уведомлен)`;
+Или подтвердить / отклонить запись (в случае отказа, пользователь не будет уведомлен)
+Ты так же можешь увидеть статус всех реквестов через <a href="https://youjob13.github.io/annsh/">админку</a>
+`;
 
     const inlineKeyboard = createInlineKeyboard([
         [`Подтвердить запись`, createDataForPartialRequestInlineQuery(InlineQuery.ApproveNewRequest, request)],
