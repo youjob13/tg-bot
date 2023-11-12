@@ -1,19 +1,17 @@
 import { Context, RawApi } from 'grammy';
 import { Other } from 'grammy/out/core/api';
 
-import * as DTO from '../../../../dto/index.js';
-import { servicesCollection } from '../../../db/handlers/services.js';
-import { formatToDate } from '../../../shared/utils.js';
-import { getUserFullName, getUsernameLink } from '../../helpers.js';
-import { InlineQuery, createInlineKeyboard } from '../../keyboards/index.js';
+import * as DTO from '../../../dto/index.js';
+import { servicesCollection } from '../../db/handlers/services.js';
+import { formatToDate } from '../../shared/utils.js';
+import { getUserFullName, getUsernameLink } from '../helpers.js';
+import { InlineQuery, createInlineKeyboard } from '../keyboards/index.js';
 
 const createDataForRequestInlineQuery = (
     inlineQuery: InlineQuery.ApproveNewRequest | InlineQuery.RejectNewRequest,
-    ctx: Context,
     request: DTO.IRequest,
 ) => {
-    const uniqueRequestId = generateUniqueRequestId(request.date, request.serviceType);
-    const data = `${inlineQuery}|${ctx.message.from.id}|${uniqueRequestId}`.trim();
+    const data = `${inlineQuery}|${request.date}`.trim();
     return data;
 };
 
@@ -21,8 +19,7 @@ const createDataForPartialRequestInlineQuery = (
     inlineQuery: InlineQuery.ApproveNewRequest | InlineQuery.RejectNewRequest | InlineQuery.RejectPartialNewRequest,
     request: DTO.IRequest,
 ) => {
-    const uniqueRequestId = generateUniqueRequestId(request.date, request.serviceType);
-    const data = `${inlineQuery}|${request.chatId}|${uniqueRequestId}`.trim();
+    const data = `${inlineQuery}|${request.date}`.trim();
     return data;
 };
 
@@ -49,8 +46,8 @@ export const generateRequestFromUser = ({
 Дата: ${formatToDate(request.date)}`;
 
     const inlineKeyboard = createInlineKeyboard([
-        [`Подтвердить запись`, createDataForRequestInlineQuery(InlineQuery.ApproveNewRequest, ctx, request)],
-        [`Отклонить запись`, createDataForRequestInlineQuery(InlineQuery.RejectNewRequest, ctx, request)],
+        [`Подтвердить запись`, createDataForRequestInlineQuery(InlineQuery.ApproveNewRequest, request)],
+        [`Отклонить запись`, createDataForRequestInlineQuery(InlineQuery.RejectNewRequest, request)],
     ]);
 
     const options: Other<RawApi, 'sendMessage', 'text' | 'chat_id'> = {
@@ -68,11 +65,6 @@ export const extractServiceTypeFromQuery = async (ctx: Context) => {
     const selectedService = await servicesCollection.getService(serviceType);
     return { value: selectedService.key, displayName: selectedService.name };
 };
-
-export const generateUniqueRequestId = (date: number, serviceType: DTO.IService['key']) => {
-    return `${date}_${serviceType}`;
-};
-
 export const generatePartialRequestFromUser = ({
     request,
     selectedService,

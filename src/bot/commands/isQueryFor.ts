@@ -1,7 +1,7 @@
 import { Context } from 'grammy';
 
-import { calendar } from '../../bot.js';
-import { InlineQuery } from '../../keyboards/index.js';
+import { calendar } from '../bot.js';
+import { InlineQuery } from '../keyboards/index.js';
 
 export const isQueryFor = (ctx: Context) => {
     const callbackQueryData = ctx.callbackQuery.data;
@@ -41,4 +41,10 @@ export const isQueryFor = (ctx: Context) => {
     if (isRejectPartialNewRequestQuery) {
         return InlineQuery.RejectPartialNewRequest;
     }
+
+    // const isCancelRequestQuery = callbackQueryData.includes(InlineQuery.CancelRequest);
+
+    // if (isCancelRequestQuery) {
+    //     return InlineQuery.CancelRequest;
+    // }
 };

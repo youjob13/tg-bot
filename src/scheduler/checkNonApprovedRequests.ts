@@ -1,8 +1,8 @@
 import { CronJob } from 'cron';
 
 import bot from '../bot/bot.js';
-import { ADMIN_ID, ADMIN_ID_2 } from '../bot/commands/handlers/constants.js';
-import { generatePartialRequestFromUser } from '../bot/commands/handlers/helpers.js';
+import { ADMIN_ID, ADMIN_ID_2 } from '../bot/commands/constants.js';
+import { generatePartialRequestFromUser } from '../bot/commands/helpers.js';
 import * as Config from '../config.js';
 import { requestCollection, servicesCollection } from '../db/handlers/index.js';
 import { schedulerLogger } from '../logger.js';
@@ -32,8 +32,7 @@ const checkNonApprovedRequests = async () => {
             const adminNotificationPromise = bot.api.sendMessage(ADMIN_ID_2, content, options);
             const adminNotificationPromise2 = bot.api.sendMessage(ADMIN_ID, content, options);
             const markPartialRequestAsNotifiedPromise = requestCollection.markPartialRequestAsNotified(
-                nonApprovedRequest.requestId,
-                nonApprovedRequest.chatId,
+                nonApprovedRequest.date,
             );
 
             await Promise.all([

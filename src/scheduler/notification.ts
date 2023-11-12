@@ -1,7 +1,7 @@
 import { CronJob } from 'cron';
 
 import bot from '../bot/bot.js';
-import { ADMIN_ID_2 } from '../bot/commands/handlers/constants.js';
+import { ADMIN_ID_2 } from '../bot/commands/constants.js';
 import * as Config from '../config.js';
 import { requestCollection, scheduleCollection } from '../db/handlers/index.js';
 import { schedulerLogger } from '../logger.js';
@@ -14,9 +14,7 @@ const pushNotification = async () => {
         const now = Date.now();
         const dates = await scheduleCollection.getBookedNotNotifiedDates();
 
-        const needNotificationDates = dates
-            .filter(({ timestamp }) => timestamp - now < ONE_DAY)
-            .map(({ uniqueId }) => uniqueId.split('|'));
+        const needNotificationDates = dates.filter(({ timestamp }) => timestamp - now < ONE_DAY);
 
         if (needNotificationDates.length === 0) {
             return;
@@ -24,8 +22,8 @@ const pushNotification = async () => {
 
         const needNotificationRequests = getNonNullableValues(
             await Promise.all(
-                needNotificationDates.map(async ([chatId, requestId]) =>
-                    requestCollection.getApprovedRequestByChatIdAndRequestId(Number(chatId), requestId),
+                needNotificationDates.map(async ({ timestamp }) =>
+                    requestCollection.getApprovedRequestByDate(timestamp),
                 ),
             ),
         );
@@ -43,9 +41,7 @@ const pushNotification = async () => {
                     request.userCustomData ?? '[Контактные данные не указаны]'
                 }`,
             );
-            const markDateAsNotifiedPromise = scheduleCollection.markDateIsNotified(
-                `${request.chatId}|${request.requestId}`,
-            );
+            const markDateAsNotifiedPromise = scheduleCollection.markDateIsNotified(request.date);
 
             await Promise.all([userNotificationPromise, adminNotificationPromise, markDateAsNotifiedPromise]);
         }

@@ -22,9 +22,9 @@ class RequestCollection {
         return await this.collection.deleteOne({ date });
     }
 
-    public async getCustomersByChatIds(chatIds: DTO.IRequest['chatId'][]) {
+    public async getCustomersByDates(dates: DTO.IRequest['date'][]) {
         try {
-            return await this.collection.find({ chatId: { $in: chatIds } }, { sort: { _timestamp: -1 } }).toArray();
+            return await this.collection.find({ date: { $in: dates } }, { sort: { _timestamp: -1 } }).toArray();
         } catch (error) {
             mongoLogger.error(error);
         }
@@ -38,20 +38,25 @@ class RequestCollection {
         }
     }
 
-    public async getRequestByChatIdAndRequestId(chatId: DTO.IRequest['chatId'], requestId: DTO.IRequest['requestId']) {
+    public async getRequestsByChatId(chatId: DTO.IRequest['chatId']) {
         try {
-            return await this.collection.findOneAndDelete({ chatId, requestId });
+            return await this.collection.find<DTO.IRequest>({ chatId }, { sort: { _timestamp: -1 } }).toArray();
         } catch (error) {
             mongoLogger.error(error);
         }
     }
 
-    public async getApprovedRequestByChatIdAndRequestId(
-        chatId: DTO.IRequest['chatId'],
-        requestId: DTO.IRequest['requestId'],
-    ) {
+    public async getRequestByDate(date: DTO.IRequest['date']) {
         try {
-            return await this.collection.findOne<DTO.IRequest>({ chatId, requestId, isApproved: true });
+            return await this.collection.findOneAndDelete({ date });
+        } catch (error) {
+            mongoLogger.error(error);
+        }
+    }
+
+    public async getApprovedRequestByDate(date: DTO.IRequest['date']) {
+        try {
+            return await this.collection.findOne<DTO.IRequest>({ date, isApproved: true });
         } catch (error) {
             mongoLogger.error(error);
         }
@@ -76,36 +81,32 @@ class RequestCollection {
             .toArray();
     }
 
-    public async markPartialRequestAsNotified(requestId: DTO.IRequest['requestId'], chatId: DTO.IRequest['chatId']) {
-        return await this.collection.updateOne(
-            { requestId, chatId },
-            { $set: { isNotifiedAboutPartialRequest: true } },
-        );
+    public async markPartialRequestAsNotified(date: DTO.IRequest['date']) {
+        return await this.collection.updateOne({ date }, { $set: { isNotifiedAboutPartialRequest: true } });
     }
 
     public async insertUserCustomDataToRequest({
-        chatId,
-        requestId,
+        date,
         userCustomData,
     }: {
-        chatId: DTO.IRequest['chatId'];
-        requestId: DTO.IRequest['requestId'];
+        date: DTO.IRequest['date'];
         userCustomData: DTO.IRequest['userCustomData'];
     }) {
         try {
-            return await this.collection.findOneAndUpdate({ chatId, requestId }, { $set: { userCustomData } });
+            return await this.collection.findOneAndUpdate({ date }, { $set: { userCustomData } });
         } catch (error) {
             mongoLogger.error(error);
         }
     }
 
-    public async approveUserRequest(chatId: DTO.IRequest['chatId'], requestId: string) {
+    public async approveUserRequest(date: DTO.IRequest['date']) {
         try {
-            return await this.collection.findOneAndUpdate({ chatId, requestId }, { $set: { isApproved: true } });
+            return await this.collection.findOneAndUpdate({ date }, { $set: { isApproved: true } });
         } catch (error) {
             mongoLogger.error(error);
         }
     }
 }
 
+export type IRequestCollection = RequestCollection;
 export const requestCollection = new RequestCollection(dbPromise);

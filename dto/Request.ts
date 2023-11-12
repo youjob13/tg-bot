@@ -14,7 +14,6 @@ export interface IRequest {
     date: number;
     isApproved: boolean;
     isNotifiedAboutPartialRequest?: boolean;
-    requestId: string;
     username: string | undefined;
     userFullName: string;
     userCustomData?: string;

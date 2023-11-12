@@ -37,23 +37,23 @@ class ScheduleCollection {
 
     public async getBookedNotNotifiedDates() {
         return await this.collection
-            .find<{ timestamp: DTO.ISchedule['timestamp']; uniqueId: DTO.ISchedule['uniqueId'] }>(
+            .find<{ timestamp: DTO.ISchedule['timestamp'] }>(
                 { isBooked: true, isNotified: { $ne: true } },
-                { projection: { timestamp: 1, uniqueId: 1 } },
+                { projection: { timestamp: 1 } },
             )
             .toArray();
     }
 
-    public async bookDate(timestamp: DTO.ISchedule['timestamp'], uniqueId: DTO.ISchedule['uniqueId']) {
-        await this.collection.updateOne({ timestamp }, { $set: { isBooked: true, uniqueId } });
+    public async bookDate(timestamp: DTO.ISchedule['timestamp']) {
+        await this.collection.updateOne({ timestamp }, { $set: { isBooked: true } });
     }
 
     public async unBookDate(timestamp: DTO.ISchedule['timestamp']) {
-        await this.collection.updateOne({ timestamp }, { $set: { isBooked: false, uniqueId: undefined } });
+        await this.collection.updateOne({ timestamp }, { $set: { isBooked: false } });
     }
 
-    public async markDateIsNotified(uniqueId: DTO.ISchedule['uniqueId']) {
-        await this.collection.updateOne({ uniqueId }, { $set: { isNotified: true } });
+    public async markDateIsNotified(timestamp: DTO.ISchedule['timestamp']) {
+        await this.collection.updateOne({ timestamp }, { $set: { isNotified: true } });
     }
 
     public async getBookedDates() {
@@ -71,4 +71,5 @@ class ScheduleCollection {
     }
 }
 
+export type IScheduleCollection = ScheduleCollection;
 export const scheduleCollection = new ScheduleCollection(dbPromise);
