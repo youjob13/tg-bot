@@ -21,6 +21,7 @@ export const MONGO_DB = {
         REQUESTS: process.env.REQUESTS_COLLECTION ?? 'requests',
         SCHEDULE: process.env.SCHEDULE_COLLECTION ?? 'schedule',
         SERVICES: process.env.SERVICES ?? 'services',
+        MESSAGES_TO_USERS: process.env.MESSAGES_TO_USERS ?? 'messages_to_users',
     },
 };
 

@@ -2,7 +2,12 @@ import { Composer, Context } from 'grammy';
 import { Chat } from 'grammy/types';
 
 import * as DTO from '../../../../dto/index.js';
-import { requestCollection, scheduleCollection, servicesCollection } from '../../../db/handlers/index.js';
+import {
+    messagesToUsersCollection,
+    requestCollection,
+    scheduleCollection,
+    servicesCollection,
+} from '../../../db/handlers/index.js';
 import { userCurrentRequestState } from '../../../db/inMemory.js';
 import { botLogger } from '../../../logger.js';
 import { formatToDate, formatToTimestamp } from '../../../shared/utils.js';
@@ -155,16 +160,20 @@ export const processApproveNewRequest = async <TContext extends Context>(ctx: TC
     try {
         const [, date] = ctx.callbackQuery.data.split('|');
 
-        const request = await requestCollection.approveUserRequest(Number(date));
+        const [request, address] = await Promise.all([
+            requestCollection.approveUserRequest(Number(date)),
+            messagesToUsersCollection.getLocation('location'),
+        ]);
         const usernameLink = getUsernameLink(request.username, request.userFullName);
 
         await ctx.editMessageReplyMarkup(undefined);
         await ctx.reply(`Запись для ${usernameLink} подтверждена`, { parse_mode: 'HTML' });
         await bot.api.sendMessage(
             request.chatId,
-            `Ваша запись подтверждена, жду Вас в ${formatToDate(
-                request.date,
-            )} по адресу:\nHagenbeckstraße 50\nU2 Lutterothstraße (5 минут пешком от станции) 🫶🏻`,
+            `Ваша запись подтверждена, жду Вас в ${formatToDate(request.date)} по адресу:${address.value.replace(
+                /\\n/g,
+                '\n',
+            )}`,
         );
         await bot.api.sendMessage(request.chatId, `В случае отмены записи пиши в Instagram annushkka.nails 🤍`);
 
