@@ -18,7 +18,9 @@ router.post(
 
         const datesFromDB = await scheduleCollection.getDates();
 
-        const datesToRemove = datesFromDB.filter(d => !formattedDates.includes(d.timestamp) && d.isBooked === false);
+        const datesToRemove = datesFromDB.filter(
+            d => !formattedDates.includes(d.timestamp) && (d.isBooked === false || d.isBooked == null),
+        );
         const datesToInsert = formattedDates
             .filter(timestamp => !datesFromDB.find(d => d.timestamp === timestamp))
             .map(timestamp => ({ timestamp }));
