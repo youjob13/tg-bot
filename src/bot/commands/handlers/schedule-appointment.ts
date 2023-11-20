@@ -59,6 +59,7 @@ composer.on('message', async ctx => {
 
             await bot.api.sendMessage(ADMIN_ID_2, content, options);
         } else if (ctx.msg.text) {
+            await bot.api.sendMessage(ADMIN_ID, formatNewMessageFromUser(ctx, 'text'));
             await bot.api.sendMessage(ADMIN_ID_2, formatNewMessageFromUser(ctx, 'text'));
         } else if (ctx.msg.voice) {
             await bot.api.sendMessage(ADMIN_ID_2, formatNewMessageFromUser(ctx, 'caption'));
