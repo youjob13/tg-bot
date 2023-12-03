@@ -18,3 +18,7 @@ export interface IRequest {
     userFullName: string;
     userCustomData?: string;
 }
+
+export interface IUpdatedRequest extends IRequest {
+    updatedDate: number;
+}

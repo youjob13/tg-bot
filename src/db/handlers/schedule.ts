@@ -17,6 +17,10 @@ class ScheduleCollection {
         return await this.collection.find<DTO.ISchedule>({}).toArray();
     }
 
+    public async getBookedDate(date: DTO.ISchedule['timestamp']) {
+        return await this.collection.findOne<DTO.ISchedule>({ timestamp: date, isBooked: true });
+    }
+
     public async setDates(dates: DTO.ISchedule[]) {
         return await this.collection.insertMany(dates);
     }
@@ -46,6 +50,14 @@ class ScheduleCollection {
 
     public async bookDate(timestamp: DTO.ISchedule['timestamp']) {
         await this.collection.updateOne({ timestamp }, { $set: { isBooked: true } });
+    }
+
+    public async upsertBookedDate(timestamp: DTO.ISchedule['timestamp']) {
+        await this.collection.updateOne(
+            { timestamp },
+            { $set: { isBooked: true, isNotified: false } },
+            { upsert: true },
+        );
     }
 
     public async unBookDate(timestamp: DTO.ISchedule['timestamp']) {

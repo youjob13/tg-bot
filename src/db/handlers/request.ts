@@ -106,6 +106,20 @@ class RequestCollection {
             mongoLogger.error(error);
         }
     }
+
+    public async upsertApprovedUserRequest(updatedRequest: DTO.IUpdatedRequest) {
+        const { updatedDate, ...other } = updatedRequest;
+        const requestToUpdate = { ...other, date: updatedDate };
+        try {
+            return await this.collection.findOneAndUpdate(
+                { date: requestToUpdate.date },
+                { $set: { ...requestToUpdate, isApproved: true } },
+                { upsert: true },
+            );
+        } catch (error) {
+            mongoLogger.error(error);
+        }
+    }
 }
 
 export type IRequestCollection = RequestCollection;
