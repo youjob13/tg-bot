@@ -6,7 +6,7 @@ export const ADMIN_ID_2 = 389718650; // Anya
 
 export const COMMAND_LIST: readonly BotCommand[] = [
     { command: 'start', description: 'Start the bot' },
-    { command: 'help', description: 'Show help text' },
-    { command: 'stop', description: 'Stop the bot' },
+    { command: 'help', description: 'How to use the bot?' },
+    // { command: 'stop', description: 'Stop the bot' },
     // { command: 'cancel', description: 'Cancel requested appointment' },
 ];
