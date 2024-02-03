@@ -13,6 +13,6 @@
     "html.format.enable": false,
     "editor.formatOnPaste": false,
     "editor.codeActionsOnSave": {
-        "source.fixAll": true,
+        "source.fixAll": "explicit"
     },
 }

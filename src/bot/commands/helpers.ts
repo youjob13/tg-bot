@@ -1,9 +1,9 @@
+import { formatToDate } from '@youjob13/utils/packages/date-formatters';
 import { Context, RawApi } from 'grammy';
 import { Other } from 'grammy/out/core/api';
 
 import * as DTO from '../../../dto/index.js';
 import { servicesCollection } from '../../db/handlers/services.js';
-import { formatToDate } from '../../shared/utils.js';
 import { getUserFullName, getUsernameLink } from '../helpers.js';
 import { InlineQuery, createInlineKeyboard } from '../keyboards/index.js';
 

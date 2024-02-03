@@ -1,3 +1,4 @@
+import { formatToDate, formatToTimestamp } from '@youjob13/utils/packages/date-formatters';
 import { Composer, Context } from 'grammy';
 import { Chat } from 'grammy/types';
 
@@ -10,7 +11,6 @@ import {
 } from '../../../db/handlers/index.js';
 import { userCurrentRequestState } from '../../../db/inMemory.js';
 import { botLogger } from '../../../logger.js';
-import { formatToDate, formatToTimestamp } from '../../../shared/utils.js';
 import bot, { calendar } from '../../bot.js';
 import { getUserFullName, getUsernameLink } from '../../helpers.js';
 import { InlineQuery, createInlineKeyboard, makeInlineQueriesWithOptions } from '../../keyboards/index.js';
@@ -20,7 +20,7 @@ import { extractServiceTypeFromQuery, generateRequestFromUser } from '../helpers
 const getAvailableDatesTitle = (availableDates: DTO.ISchedule['timestamp'][]) =>
     `<b>Свободные даты:</b>
 
-${availableDates.map(formatToDate).join('\n')}`;
+${availableDates.map(d => formatToDate(d)).join('\n')}`;
 
 const formatNewMessageFromUser = (ctx: Context, format: 'text' | 'caption') => {
     return `Новое сообщение от ${getUsernameLink(

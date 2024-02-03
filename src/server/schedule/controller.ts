@@ -1,10 +1,11 @@
+import { formatStringDateToTimestamp } from '@youjob13/utils/packages/date-formatters';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 
+import * as Config from '../../config.js';
 import { requestCollection, scheduleCollection } from '../../db/handlers/index.js';
 import { apiLogger } from '../../logger.js';
-import { formatStringDateToTimestamp } from '../../shared/utils.js';
 import { getBookedRequests } from './helpers.js';
 
 const router = express.Router();
@@ -14,7 +15,7 @@ router.post(
     asyncHandler(async (req, res) => {
         const { dates } = req.body as { dates: string[] };
 
-        const formattedDates = dates.map(date => formatStringDateToTimestamp(date.trim()));
+        const formattedDates = dates.map(date => formatStringDateToTimestamp(date.trim(), { zone: Config.TZ }));
 
         const datesFromDB = await scheduleCollection.getDates();
 
