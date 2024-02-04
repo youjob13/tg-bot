@@ -8,7 +8,8 @@
     "strict": false, // todo: solve problem with ts-node and turn on strict mode
     "esModuleInterop": true,
     "outDir": "dist",
-    "typeRoots": [ "./src/typings", "./node_modules/@types"]
+    "typeRoots": [ "./src/typings", "./node_modules/@types"],
+    "allowJs": true
   },
   "include": ["src/**/*", "dto/**/*", "typing"],
   "exclude": ["node_modules", "dist"]

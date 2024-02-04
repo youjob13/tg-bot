@@ -1,5 +1,4 @@
-import { formatToDate } from '@youjob13/utils/packages/date-formatters';
-import { getNonNullableValues } from '@youjob13/utils/packages/utils';
+import { formatToDate, getNonNullableValues } from '@youjob13/utils/dist/src/index.js';
 import { CronJob } from 'cron';
 
 import bot from '../bot/bot.js';

@@ -1,4 +1,4 @@
-import { formatToDate, formatToTimestamp } from '@youjob13/utils/packages/date-formatters';
+import { formatToDate, formatToTimestamp } from '@youjob13/utils/dist/src/index.js';
 import { Composer, Context } from 'grammy';
 import { Chat } from 'grammy/types';
 

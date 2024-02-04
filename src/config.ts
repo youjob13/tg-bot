@@ -1,6 +1,12 @@
+import { ADMIN_ID } from './bot/commands/constants.js';
+
+export const ENV = process.env.ENV ?? 'development';
+
+export const isDev = ENV === 'development';
+
 export const TG_BOT = {
     ADMIN: {
-        USER_NAME: process.env.TG_BOT_ADMIN_USER_NAME ?? '',
+        USER_NAME: isDev ? ADMIN_ID : process.env.TG_BOT_ADMIN_USER_NAME ?? '',
     },
     TOKEN: process.env.TG_BOT_TOKEN ?? '',
     LANGUAGE: process.env.TG_BOT_LANGUAGE ?? 'ru',
@@ -24,5 +30,9 @@ export const MONGO_DB = {
         MESSAGES_TO_USERS: process.env.MESSAGES_TO_USERS ?? 'messages_to_users',
     },
 };
+// 172.22.49.34
+export const MONGO_DB_CONNECTION_STRING = isDev
+    ? 'mongodb://localhost:27017/test'
+    : `mongodb+srv://${MONGO_DB.USER}:${MONGO_DB.PASS}@cluster-base.knd90rj.mongodb.net/?retryWrites=true&w=majority`;
 
 export const TZ = process.env.APP_TZ ?? 'Europe/Berlin';

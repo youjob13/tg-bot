@@ -1,4 +1,4 @@
-import { formatStringDateToTimestamp } from '@youjob13/utils/packages/date-formatters';
+import { formatStringDateToTimestamp } from '@youjob13/utils/dist/src/index.js';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';

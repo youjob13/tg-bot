@@ -1,4 +1,4 @@
-import { formatToDate } from '@youjob13/utils/packages/date-formatters';
+import { formatToDate } from '@youjob13/utils/dist/src/index.js';
 import { Context, RawApi } from 'grammy';
 import { Other } from 'grammy/out/core/api';
 

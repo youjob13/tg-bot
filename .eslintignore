@@ -2,3 +2,4 @@ dist
 .eslintrc.yml
 .prettierrc.json
 typing
+docker-compose.yml
