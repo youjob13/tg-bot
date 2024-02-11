@@ -9,7 +9,8 @@
     "start:dev": "nodemon -r dotenv/config ./src/index.ts | bunyan --color",
     "start": "node -r dotenv/config ./dist/src/index.js",
     "lint": "eslint src/**/*.ts",
-    "build": "tsc -b tsconfig.json && cp ./src/assets/language.json ./dist/src/assets/language.json",
+    "build-utils": "tsc -b node_modules/@youjob13/utils/tsconfig.build.json",
+    "build": "npm run build-utils & tsc -b tsconfig.json && cp ./src/assets/language.json ./dist/src/assets/language.json",
     "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\""
   },
   "engines": {
@@ -39,7 +40,7 @@
     "@grammyjs/menu": "1.2.1",
     "@grammyjs/runner": "2.0.3",
     "@grammyjs/transformer-throttler": "1.2.1",
-    "@youjob13/utils": "1.4.0",
+    "@youjob13/utils": "^1.8.0",
     "bunyan": "1.8.15",
     "cors": "2.8.5",
     "cron": "3.0.0",
