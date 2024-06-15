@@ -9,12 +9,12 @@
     "start:dev": "nodemon -r dotenv/config --experimental-specifier-resolution=node ./src/index.ts | bunyan --color",
     "start": "node -r dotenv/config ./dist/src/index.js",
     "lint": "eslint src/**/*.ts",
-    "build": "tsc -b tsconfig.json && cp ./src/assets/language.json ./dist/src/assets/language.json",
+    "build": "tsc -b tsconfig.json && mkdir -p ./packages/bot/dist/assets/ && cp ./src/assets/language.json ./packages/bot/dist/assets/language.json",
     "pretty": "prettier --config .prettierrc.json --write \"src/**/*.ts\""
   },
   "engines": {
-    "node": "18.17.0",
-    "npm": "9.6.7"
+    "node": ">=18.17.0",
+    "npm": ">=9.6.7"
   },
   "author": "Danil_Rodionov",
   "license": "ISC",
@@ -36,6 +36,11 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
+    "@ann-nails/bot": "^1.0.0",
+    "@ann-nails/config": "^1.0.0",
+    "@ann-nails/db": "^1.0.0",
+    "@ann-nails/logger": "^1.0.0",
+    "@ann-nails/scheduler": "^1.0.0",
     "@grammyjs/menu": "1.2.1",
     "@grammyjs/runner": "2.0.3",
     "@grammyjs/transformer-throttler": "1.2.1",

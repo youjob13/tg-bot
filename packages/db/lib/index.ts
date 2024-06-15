@@ -1,3 +1,3 @@
-export * from './handlers';
-export * from './inMemory';
-export * from './mongo';
+export * from './handlers/index.js';
+export * from './inMemory.js';
+export * from './mongo.js';

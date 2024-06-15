@@ -1,5 +1,5 @@
-export { calendar, default as bot } from './bot';
-export * from './calendar';
-export * from './commands';
-export * from './helpers';
-export * from './keyboards';
+export { calendar, default as bot } from './bot.js';
+export * from './calendar.js';
+export * from './commands/index.js';
+export * from './helpers.js';
+export * from './keyboards/index.js';

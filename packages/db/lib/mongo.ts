@@ -2,7 +2,7 @@ import * as Config from '@ann-nails/config';
 import { mongoLogger } from '@ann-nails/logger';
 import * as Mongo from 'mongodb';
 
-const uri = 'mongodb://root:example@172.22.48.1:27017/test';
+// const uri = 'mongodb://root:example@172.22.48.1:27017/test';
 // const uri = `mongodb+srv://${Config.MONGO_DB.USER}:${Config.MONGO_DB.PASS}@cluster-base.knd90rj.mongodb.net/?retryWrites=true&w=majority`;
 const client = new Mongo.MongoClient(Config.MONGO_DB_CONNECTION_STRING, {
     serverApi: {

@@ -1,5 +1,4 @@
-import { IRequestCollection } from '../../../packages/db/lib/handlers/request';
-import { IScheduleCollection } from '../../../packages/db/lib/handlers/schedule';
+import { IRequestCollection, IScheduleCollection } from '@ann-nails/db';
 
 export const getBookedRequests = async ({
     scheduleCollection,

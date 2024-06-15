@@ -7,7 +7,10 @@
         "declarationMap": true
     },
     "references": [
-        { "path": "../config" }
+        { "path": "../config" },
+        { "path": "../db" },
+        { "path": "../logger" },
+        { "path": "../bot" },
     ],
     "exclude": ["dist"],
     "include": ["**/*.ts"]

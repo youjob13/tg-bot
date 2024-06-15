@@ -1,9 +1,8 @@
+import { servicesCollection } from '@ann-nails/db';
+import * as DTO from '@ann-nails/dto';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-
-import * as DTO from '../../../dto/index.js';
-import { servicesCollection } from '../../../packages/db/lib/handlers/index.js';
 
 const router = express.Router();
 

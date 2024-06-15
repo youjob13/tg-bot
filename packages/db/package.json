@@ -2,8 +2,13 @@
   "name": "@ann-nails/db",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "type": "module",
-  "author": "",
-  "license": "ISC"
+  "author": "Danil Rodionow",
+  "license": "ISC",
+  "dependencies": {
+    "@ann-nails/config": "^1.0.0",
+    "@ann-nails/dto": "^1.0.0",
+    "@ann-nails/logger": "^1.0.0"
+  }
 }

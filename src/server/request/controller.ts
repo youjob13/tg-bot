@@ -1,8 +1,7 @@
+import { requestCollection, scheduleCollection } from '@ann-nails/db';
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-
-import { requestCollection, scheduleCollection } from '../../../packages/db/lib/handlers/index.js';
 
 const router = express.Router();
 

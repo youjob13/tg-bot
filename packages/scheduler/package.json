@@ -5,5 +5,11 @@
   "type": "module",
   "main": "dist/index.js",
   "author": "Danil Rodionow",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@ann-nails/bot": "^1.0.0",
+    "@ann-nails/config": "^1.0.0",
+    "@ann-nails/db": "^1.0.0",
+    "@ann-nails/logger": "^1.0.0"
+  }
 }
