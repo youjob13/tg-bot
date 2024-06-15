@@ -1,0 +1,9 @@
+{
+  "name": "@ann-nails/scheduler",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "author": "Danil Rodionow",
+  "license": "ISC"
+}

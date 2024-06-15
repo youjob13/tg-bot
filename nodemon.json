@@ -11,6 +11,8 @@
     ],
     "restartable": "rs",
     "watch": [
-        "src"
+        "src",
+        "packages",
+        "dto"
     ]
 }

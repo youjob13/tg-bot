@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "composite": true,
+        "outDir": "dist",
+        "module": "ESNext",
+        "declarationMap": true
+    },
+    "references": [
+        { "path": "../config" }
+    ],
+    "exclude": ["dist"],
+    "include": ["**/*.ts"]
+}

@@ -15,4 +15,8 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": "explicit"
     },
+    "prettier.semi": false,
+    "prettier.singleQuote": true,
+    "prettier.endOfLine": "lf",
+    "prettier.useEditorConfig": false
 }

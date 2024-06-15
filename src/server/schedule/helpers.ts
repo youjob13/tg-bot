@@ -1,5 +1,5 @@
-import { IRequestCollection } from '../../db/handlers/request';
-import { IScheduleCollection } from '../../db/handlers/schedule';
+import { IRequestCollection } from '../../../packages/db/lib/handlers/request';
+import { IScheduleCollection } from '../../../packages/db/lib/handlers/schedule';
 
 export const getBookedRequests = async ({
     scheduleCollection,

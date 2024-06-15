@@ -1,0 +1,9 @@
+{
+  "name": "@ann-nails/db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "author": "",
+  "license": "ISC"
+}

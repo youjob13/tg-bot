@@ -3,7 +3,7 @@ import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 
 import * as DTO from '../../../dto/index.js';
-import { servicesCollection } from '../../db/handlers/index.js';
+import { servicesCollection } from '../../../packages/db/lib/handlers/index.js';
 
 const router = express.Router();
 

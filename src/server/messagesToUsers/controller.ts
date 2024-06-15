@@ -1,7 +1,7 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 
-import { messagesToUsersCollection } from '../../db/handlers/index.js';
+import { messagesToUsersCollection } from '../../../packages/db/lib/handlers/index.js';
 
 const router = express.Router();
 

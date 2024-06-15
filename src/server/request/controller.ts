@@ -2,7 +2,7 @@ import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 
-import { requestCollection, scheduleCollection } from '../../db/handlers/index.js';
+import { requestCollection, scheduleCollection } from '../../../packages/db/lib/handlers/index.js';
 
 const router = express.Router();
 

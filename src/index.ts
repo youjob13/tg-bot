@@ -1,12 +1,12 @@
 import { run } from '@grammyjs/runner';
 
-import bot from './bot/bot.js';
-import * as Config from './config.js';
-import { runMongo } from './db/mongo.js';
-import { apiLogger, botLogger, mongoLogger, schedulerLogger } from './logger.js';
-import checkNonApprovedRequestsJob from './scheduler/checkNonApprovedRequests.js';
-import notificationsJob from './scheduler/notification.js';
-import removeOutdatedAppointmentsJob from './scheduler/removeOutdatedAppointments.js';
+import bot from '../packages/bot/lib/bot.js';
+import * as Config from '../packages/config/lib/config.js';
+import { runMongo } from '../packages/db/lib/mongo.js';
+import { apiLogger, botLogger, mongoLogger, schedulerLogger } from '../packages/logger/lib/logger.js';
+import checkNonApprovedRequestsJob from '../packages/scheduler/lib/checkNonApprovedRequests.js';
+import notificationsJob from '../packages/scheduler/lib/notification.js';
+import removeOutdatedAppointmentsJob from '../packages/scheduler/lib/removeOutdatedAppointments.js';
 import server from './server/server.js';
 
 server.listen(Config.PORT, async () => {

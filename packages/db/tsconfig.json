@@ -1,0 +1,16 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "composite": true,
+        "outDir": "dist",
+        "module": "ESNext",
+        "declarationMap": true
+    },
+    "references": [
+        { "path": "../config" },
+        { "path": "../logger" },
+        { "path": "../../dto" }
+    ],
+    "exclude": ["dist"],
+    "include": ["**/*.ts"]
+}

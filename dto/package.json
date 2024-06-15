@@ -1,0 +1,9 @@
+{
+  "name": "@ann-nails/dto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "author": "",
+  "license": "ISC"
+}

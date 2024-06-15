@@ -2,8 +2,8 @@ import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 
-import bot from '../../bot/bot.js';
-import { ADMIN_ID } from '../../bot/commands/constants.js';
+import bot from '../../../packages/bot/lib/bot.js';
+import { ADMIN_ID } from '../../../packages/config/lib/config.js';
 
 const router = express.Router();
 
