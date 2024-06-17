@@ -1,47 +1,24 @@
-FROM node:18-alpine as package.json
-
-# Create app directory
-# WORKDIR /app
-
-# Install app dependencies
-COPY --chown=app package*.json ./
-COPY --chown=app /packages ./packages
-RUN find packages \
-      -type f \
-      ! -name "package.json" \
-      -delete && \
-    find packages \
-      -type d \
-      -empty \
-      -delete
-
 FROM node:18-alpine as builder
 
-COPY --from=package.json --chown=app . .
-
-RUN npm ci
+WORKDIR /app
 
 COPY --chown=app . .
-RUN ls packages
-RUN ls node_modules
+
+RUN npm ci
 RUN npm run build
 
 FROM node:18-alpine
 
-# ENV NODE_ENV production
-# USER node
+WORKDIR /app
 
-# Create app directory
-# WORKDIR /app
+COPY --chown=app --from=builder /app/package.json .
+COPY --chown=app --from=builder /app/dist ./dist
+COPY --chown=app --from=builder /app/node_modules ./node_modules
+COPY --chown=app --from=builder /app/dto ./dto
+COPY --chown=app --from=builder /app/packages ./packages
+COPY --chown=app --from=builder /app/typing ./typing
+COPY --chown=app --from=builder /app/.env .
 
-# Install app dependencies
-# COPY --chown=app package*.json ./
-
-COPY --chown=app --from=builder /package.json .
-COPY --chown=app --from=builder /dist ./dist
-COPY --chown=app --from=builder /node_modules ./node_modules
-COPY --chown=app --from=builder /dto ./dto
-COPY --chown=app --from=builder /packages ./packages
-
+USER node
 EXPOSE 8080
-CMD [ "node", "dist/index.js" ]
+CMD [ "npm", "start" ]

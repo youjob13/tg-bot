@@ -1,7 +1,6 @@
 import dayjs, { ManipulateType } from 'dayjs';
 import tz from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
-import { readFile } from 'fs/promises';
 import type { Api, Bot, Context, RawApi } from 'grammy';
 import {
     ForceReply,
@@ -11,6 +10,7 @@ import {
     ReplyKeyboardRemove,
 } from 'grammy/types';
 import { createRequire } from 'module';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Calendar, type ICalendarOptions } from 'telegram-inline-calendar';
@@ -20,11 +20,7 @@ dayjs.extend(tz);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-console.log(__dirname);
-const assetsPath = path.join(__dirname, '../../../bot/dist/assets/language.json');
-console.log(assetsPath);
-
-console.log(new URL(assetsPath).pathname);
+const assetsPath = path.join(__dirname, '../assets/language.json');
 
 const lang = JSON.parse((await readFile(new URL(assetsPath, import.meta.url).pathname)).toString());
 

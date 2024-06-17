@@ -1,0 +1,11 @@
+*
+!packages
+!src
+!dto
+!typing
+!package.json
+!package-lock.json
+!tsconfig.json
+!.env
+**/node_modules
+**/dist
