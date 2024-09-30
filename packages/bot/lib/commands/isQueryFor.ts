@@ -42,9 +42,9 @@ export const isQueryFor = (ctx: Context) => {
         return InlineQuery.RejectPartialNewRequest;
     }
 
-    // const isCancelRequestQuery = callbackQueryData.includes(InlineQuery.CancelRequest);
+    const isCancelRequestQuery = callbackQueryData.includes(InlineQuery.CancelRequest);
 
-    // if (isCancelRequestQuery) {
-    //     return InlineQuery.CancelRequest;
-    // }
+    if (isCancelRequestQuery) {
+        return InlineQuery.CancelRequest;
+    }
 };

@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "precommit": "npm run lint && npm run pretty && npm run build",
+    "precommit": "npm run pretty && npm run lint && npm run build",
     "start:dev": "nodemon -r dotenv/config --experimental-specifier-resolution=node ./src/index.ts | bunyan --color",
     "start": "node -r dotenv/config ./dist/src/index.js",
     "lint": "eslint src/**/*.ts",

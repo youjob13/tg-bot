@@ -1,7 +1,7 @@
 {
     "env": { },
     "execMap": {
-        "ts": "node --loader ts-node/esm"
+        "ts": "npm run build && node --loader ts-node/esm"
     },
     "ext": "ts",
     "ignore": [

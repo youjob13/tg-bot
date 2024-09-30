@@ -3,7 +3,7 @@ import { Composer } from 'grammy';
 
 import { InlineQuery } from '../../keyboards/index.js';
 import { isQueryFor } from '../isQueryFor.js';
-// import { processCancelRequest } from './cancel-appointment.js';
+import { processCancelRequest } from './cancel-appointment.js';
 import {
     processApproveNewRequest,
     processMakeAppointment,
@@ -41,10 +41,10 @@ composer.on('callback_query:data', async ctx => {
                 await processRejectNewRequest(ctx, false);
                 break;
             }
-            // case InlineQuery.CancelRequest: {
-            //     await processCancelRequest(ctx);
-            //     break;
-            // }
+            case InlineQuery.CancelRequest: {
+                await processCancelRequest(ctx);
+                break;
+            }
         }
     } catch (error) {
         botLogger.error(error, { chatId: ctx.message?.chat.id, fromId: ctx.message?.from.id });

@@ -19,7 +19,7 @@ class RequestCollection {
     }
 
     public async removeRequest(date: DTO.IRequest['date']) {
-        return await this.collection.deleteOne({ date });
+        return (await this.collection.findOneAndDelete({ date })) as unknown as DTO.IRequest;
     }
 
     public async getCustomersByDates(dates: DTO.IRequest['date'][]) {

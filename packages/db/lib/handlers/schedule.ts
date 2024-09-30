@@ -64,6 +64,10 @@ class ScheduleCollection {
         await this.collection.updateOne({ timestamp }, { $set: { isBooked: false } });
     }
 
+    public async resetDate(timestamp: DTO.ISchedule['timestamp']) {
+        return await this.collection.updateOne({ timestamp }, { $set: { isBooked: false, isNotified: false } });
+    }
+
     public async markDateIsNotified(timestamp: DTO.ISchedule['timestamp']) {
         await this.collection.updateOne({ timestamp }, { $set: { isNotified: true } });
     }
